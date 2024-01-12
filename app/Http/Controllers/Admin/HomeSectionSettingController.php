@@ -37,3 +37,4 @@ class HomeSectionSettingController extends Controller
         return redirect()->back();
     }
 }
+

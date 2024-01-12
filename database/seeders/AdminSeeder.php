@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 use Spatie\Permission\Models\Permission;
 use App\Models\Admin;
+use App\Models\Ad;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -22,10 +23,44 @@ class AdminSeeder extends Seeder
         $admin->status =1;
         
         $admin->save();
+        $ad = new Ad();
+        $ad->home_top_bar_ad ='uploads/09UF0tD3WF9xMt1EDoxnjYB7XXY5q8.png';
+        
+    
+        $ad->home_top_bar_ad_status =1;
+        $ad->home_middle_ad ='uploads/m5IQnCsK9d3nO4nO6vKEK6rBbf7cgT.png';
+        $ad->home_middle_ad_status =1;
+        $ad->view_page_ad='uploads/ZzaCdWrej3oyDP5ABJ6eManq8LTRDY.png';
+        $ad->view_page_ad_status =1;
+        $ad->news_page_ad='uploads/1MvD8y9Qoy3d9rBDd7nIkCDMWxdXVm.png';
+        $ad->news_page_ad_status =1;
+        $ad->side_bar_ad='uploads/Gr5Mp1wLpmifc145IM01bFEVJzq9dC.png';
+        $ad->side_bar_ad_status =1;
+        $ad->save();
         \DB::table('roles')->insert(
             [
                 ['id' => 4, 'name' => 'Super Admin', 'guard_name' => 'admin'],
                 
+            ]
+        );
+        \DB::table('settings')->insert(
+            [
+                ['key'=>'site_name','value'=>'News'],
+                ['key'=>'site_logo','value'=>'uploads/fcGC0SXmYvI0kepIBB1usluTLpoPms.png'],
+                ['key'=>'site_favicon' ,'value'=>'uploads/8KfHnM4inZPpdfjzZ0zdRenKRRKLjK.png'],
+                ['key'=>'site_seo_title' ,'value'=>'Top News'],
+                ['key'=>'site_seo_description' ,'value'=>'Placeat commodo sus'],
+                ['key'=> 'site_seo_keywords' ,'value'=>'Graham Howard'],
+                ['key'=> 'site_color' ,'value'=> '#d31066'],
+                ['key'=>  'site_microsoft_api_host' ,'value'=>  'microsoft-translator-text.p.rapidapi.com'],
+                ['key'=>   'site_microsoft_api_key','value'=>  '8f9becca73msh0ee8ad5b8269c32p1b84b8jsn34d3719c2fe1'],
+               
+            ]
+        );
+        \DB::table('languages')->insert(
+            [
+                ['name' => 'English', 'lang' => 'en', 'slug' => 'en','default' => '1','status' => '1'],
+                ['name' => 'Vietnamese', 'lang' => 'vi', 'slug' => 'vi','default' => '0','status' => '0'],
             ]
         );
         \DB::table('model_has_roles')->insert(
