@@ -10,7 +10,10 @@
             "src": "/uploads/(.*)",
             "dest": "/public/uploads/"
         },
-      
+        {
+            "src": "/css/(.*)",
+            "dest": "/public/frontend/asset/"
+        },
         {
             "src": "/(.*)",
             "dest": "/api/index.php"
