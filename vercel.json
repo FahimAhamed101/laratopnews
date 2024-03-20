@@ -11,8 +11,12 @@
             "dest": "/public/uploads/"
         },
         {
-            "src": "/css/(.*)",
-            "dest": "/public/frontend/asset/"
+            "src": "/frontend/asset/css/(.*)",
+            "dest": "/public/frontend/asset/css/"
+        },
+        {
+            "src": "/frontend/asset/js/(.*)",
+            "dest": "/public/frontend/asset/js/"
         },
         {
             "src": "/(.*)",
