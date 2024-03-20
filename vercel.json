@@ -6,7 +6,10 @@
    
     "routes": [
        
-        
+        {
+            "src": "/uploads/(.*)",
+            "dest": "/public/uploads/"
+        },
       
         {
             "src": "/(.*)",
