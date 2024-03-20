@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 use Spatie\Permission\Models\Permission;
 use App\Models\Admin;
+use App\Models\Category;
+use App\Models\News;
 use App\Models\Ad;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,10 +18,18 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         $admin = new Admin();
-        $admin->image ='/test';
+        $admin->image ='uploads/EKIABPcZLJ0EvV2kLoMM4eST6n8whJ.jpg';
         $admin->name='Super Admin';
-        $admin->email='admin@admin.com';
-        $admin->password=Hash::make('admin');//password
+        $admin->email='admin@gmail.com';
+        $admin->password=Hash::make('12345678');//password
+        $admin->status =1;
+        
+        $admin->save();
+        $admin = new Admin();
+        $admin->image ='/test';
+        $admin->name='Writer';
+        $admin->email='writer@gmail.com';
+        $admin->password=Hash::make('12345678');//password
         $admin->status =1;
         
         $admin->save();
@@ -40,7 +50,7 @@ class AdminSeeder extends Seeder
         \DB::table('roles')->insert(
             [
                 ['id' => 4, 'name' => 'Super Admin', 'guard_name' => 'admin'],
-                
+              
             ]
         );
         \DB::table('settings')->insert(
@@ -57,10 +67,38 @@ class AdminSeeder extends Seeder
                
             ]
         );
+        \DB::table('categories')->insert(
+            [
+                ['name' => 'Sports', 'language' => 'en', 'slug' => 'Sports','show_at_nav' => '1','status' => '1'],
+                ['name' => 'Thể thao', 'language' => 'vi', 'slug' => 'Thể thao','show_at_nav' => '1','status' => '1'],
+                ['name' => 'Entertainment', 'language' => 'en', 'slug' => 'Entertainment','show_at_nav' => '1','status' => '1'],
+                ['name' => 'Society', 'language' => 'en', 'slug' => 'Society','show_at_nav' => '1','status' => '1'],
+                ['name' => 'Economy', 'language' => 'en', 'slug' => 'Economy','show_at_nav' => '1','status' => '1'],
+            ]
+        );
+        \DB::table('news')->insert(
+            [
+                ['title' => '1.6 million rural workers in Mekong Delta to be trained in agriculture','content' => '<h1 class="headline" style="margin-bottom: 10px; font-weight: 400; line-height: 4.6rem; font-size: 3.6rem; font-family: PlayfairDisplay, serif; color: rgb(51, 51, 51);">1.6 million rural workers in Mekong Delta to be trained in agriculture</h1>','image' =>'uploads/QEjizKuB3lVOdNhDmLDqDlQmXJFmUo.webp', 'language' => 'en', 'slug' => 'mikel-arteta-admits-he-didnt-know-martin-odegaard-was-going-to-take-arsenals-penalty-in-their-win-at-crystal-palace','is_breaking_news' => '1','status' => '1','is_approved' => '1','views' => '1','show_at_popular' => '1','category_id' => '1','author_id' => '1'],
+             
+            ]
+        );
+
         \DB::table('languages')->insert(
             [
                 ['name' => 'English', 'lang' => 'en', 'slug' => 'en','default' => '1','status' => '1'],
                 ['name' => 'Vietnamese', 'lang' => 'vi', 'slug' => 'vi','default' => '0','status' => '0'],
+            ]
+        );
+        \DB::table('tags')->insert(
+            [
+                ['name' => 'economy', 'language' => 'en',],
+             
+            ]
+        );
+        \DB::table('news_tags')->insert(
+            [
+                ['news_id' => '1', 'tag_id' => '1',],
+             
             ]
         );
         \DB::table('model_has_roles')->insert(
@@ -69,7 +107,7 @@ class AdminSeeder extends Seeder
                 
             ]
         );
-        
+       
        
     }
 }
