@@ -45,5 +45,5 @@
     },
     "outputDirectory":"public",
  
-  "buildCommand": "chmod +x .vercel/build.sh && .vercel/build.sh"
+  "buildCommand": "chmod +x ./build.sh && ./build.sh"
 }
