@@ -22,6 +22,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+// Auto-run migrations in production (use with caution)
+    if (app()->environment('production')) {
+        try {
+            if (!Schema::hasTable('migrations')) {
+                \Artisan::call('migrate --force --no-interaction');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Auto-migration failed: ' . $e->getMessage());
+        }
+    }
+
+
         Paginator::useBootstrap();
 
         $setting = Setting::pluck('value', 'key')->toArray();
