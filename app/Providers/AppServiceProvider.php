@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\Schema; // Add this
+use Illuminate\Support\Facades\Log; 
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -26,9 +28,19 @@ class AppServiceProvider extends ServiceProvider
 // Auto-run migrations in production (use with caution)
     if (app()->environment('production')) {
         try {
-            if (!Schema::hasTable('migrations')) {
-                \Artisan::call('migrate --force --no-interaction');
-            }
+            $tables = DB::select('SHOW TABLES');
+        $databaseName = DB::getDatabaseName();
+        
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        
+        foreach ($tables as $table) {
+            $tableName = $table->{'Tables_in_' . $databaseName};
+            DB::statement("DROP TABLE IF EXISTS $tableName");
+            Log::info("Dropped table: $tableName");
+        }
+        
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        Log::info('All tables deleted successfully');
         } catch (\Exception $e) {
             \Log::error('Auto-migration failed: ' . $e->getMessage());
         }
