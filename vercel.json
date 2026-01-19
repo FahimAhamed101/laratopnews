@@ -44,6 +44,6 @@
        
     },
     "outputDirectory":"public",
-  "installCommand": "curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev --optimize-autoloader",
+ 
   "buildCommand": "chmod +x .vercel/build.sh && .vercel/build.sh"
 }
