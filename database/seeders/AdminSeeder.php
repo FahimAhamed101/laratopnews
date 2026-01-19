@@ -33,22 +33,6 @@ class AdminSeeder extends Seeder
         $admin->status =1;
         
         $admin->save();
-\DB::table('settings')->insert(
-            [
-                ['key'=>'site_name','value'=>'News'],
-                ['key'=>'site_logo','value'=>'uploads/fcGC0SXmYvI0kepIBB1usluTLpoPms.png'],
-                ['key'=>'site_favicon' ,'value'=>'uploads/8KfHnM4inZPpdfjzZ0zdRenKRRKLjK.png'],
-                ['key'=>'site_seo_title' ,'value'=>'Top News'],
-                ['key'=>'site_seo_description' ,'value'=>'Placeat commodo sus'],
-                ['key'=> 'site_seo_keywords' ,'value'=>'Graham Howard'],
-                ['key'=> 'site_color' ,'value'=> '#d31066'],
-                ['key'=>  'site_microsoft_api_host' ,'value'=>  'microsoft-translator-text.p.rapidapi.com'],
-                ['key'=>   'site_microsoft_api_key','value'=>  '8f9becca73msh0ee8ad5b8269c32p1b84b8jsn34d3719c2fe1'],
-               
-            ]
-        );
-
-
         $ad = new Ad();
         $ad->home_top_bar_ad ='uploads/09UF0tD3WF9xMt1EDoxnjYB7XXY5q8.png';
         
@@ -69,7 +53,20 @@ class AdminSeeder extends Seeder
               
             ]
         );
-        
+        \DB::table('settings')->insert(
+            [
+                ['key'=>'site_name','value'=>'News'],
+                ['key'=>'site_logo','value'=>'uploads/fcGC0SXmYvI0kepIBB1usluTLpoPms.png'],
+                ['key'=>'site_favicon' ,'value'=>'uploads/8KfHnM4inZPpdfjzZ0zdRenKRRKLjK.png'],
+                ['key'=>'site_seo_title' ,'value'=>'Top News'],
+                ['key'=>'site_seo_description' ,'value'=>'Placeat commodo sus'],
+                ['key'=> 'site_seo_keywords' ,'value'=>'Graham Howard'],
+                ['key'=> 'site_color' ,'value'=> '#d31066'],
+                ['key'=>  'site_microsoft_api_host' ,'value'=>  'microsoft-translator-text.p.rapidapi.com'],
+                ['key'=>   'site_microsoft_api_key','value'=>  '8f9becca73msh0ee8ad5b8269c32p1b84b8jsn34d3719c2fe1'],
+               
+            ]
+        );
         \DB::table('categories')->insert(
             [
                 ['name' => 'Sports', 'language' => 'en', 'slug' => 'Sports','show_at_nav' => '1','status' => '1'],

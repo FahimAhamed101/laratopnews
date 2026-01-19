@@ -31,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         try {
             if (!Schema::hasTable('migrations')) {
                 \Artisan::call('migrate --force --no-interaction');
+                 \Artisan::call('migrate:fresh --force --no-interaction');
                   \Artisan::call('db:seed --class=AdminSeeder --force --no-interaction');
             }
         } catch (\Exception $e) {
