@@ -33,26 +33,20 @@ class AdminSeeder extends Seeder
         $admin->status =1;
         
         $admin->save();
-       Ad::firstOrCreate(
-            ['id' => 1],
-            [
-                'home_top_bar_ad' => 'uploads/09UF0tD3WF9xMt1EDoxnjYB7XXY5q8.png',
-                'home_top_bar_ad_status' => 1,
-                'home_top_bar_ad_url' => '#', // Add this field if missing
-                'home_middle_ad' => 'uploads/m5IQnCsK9d3nO4nO6vKEK6rBbf7cgT.png',
-                'home_middle_ad_status' => 1,
-                'home_middle_ad_url' => '#',
-                'view_page_ad' => 'uploads/ZzaCdWrej3oyDP5ABJ6eManq8LTRDY.png',
-                'view_page_ad_status' => 1,
-                'view_page_ad_url' => '#',
-                'news_page_ad' => 'uploads/1MvD8y9Qoy3d9rBDd7nIkCDMWxdXVm.png',
-                'news_page_ad_status' => 1,
-                'news_page_ad_url' => '#',
-                'side_bar_ad' => 'uploads/Gr5Mp1wLpmifc145IM01bFEVJzq9dC.png',
-                'side_bar_ad_status' => 1,
-                'side_bar_ad_url' => '#',
-            ]
-        );
+        $ad = new Ad();
+        $ad->home_top_bar_ad ='uploads/09UF0tD3WF9xMt1EDoxnjYB7XXY5q8.png';
+        
+    
+        $ad->home_top_bar_ad_status =1;
+        $ad->home_middle_ad ='uploads/m5IQnCsK9d3nO4nO6vKEK6rBbf7cgT.png';
+        $ad->home_middle_ad_status =1;
+        $ad->view_page_ad='uploads/ZzaCdWrej3oyDP5ABJ6eManq8LTRDY.png';
+        $ad->view_page_ad_status =1;
+        $ad->news_page_ad='uploads/1MvD8y9Qoy3d9rBDd7nIkCDMWxdXVm.png';
+        $ad->news_page_ad_status =1;
+        $ad->side_bar_ad='uploads/Gr5Mp1wLpmifc145IM01bFEVJzq9dC.png';
+        $ad->side_bar_ad_status =1;
+        $ad->save();
         \DB::table('roles')->insert(
             [
                 ['id' => 4, 'name' => 'Super Admin', 'guard_name' => 'admin'],
