@@ -43,5 +43,7 @@
        
        
     },
-    "outputDirectory":"public"
+    "outputDirectory":"public",
+      "installCommand": "composer install --no-dev --optimize-autoloader",
+  "buildCommand": "chmod +x build.sh && ./build.sh"
 }
