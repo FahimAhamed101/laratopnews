@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Providers;
+
 use App\Models\Setting;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Schema; // Added this
+use Illuminate\Support\Facades\Log;    // Added this
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
        

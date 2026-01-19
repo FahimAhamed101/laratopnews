@@ -4,7 +4,7 @@
 /public/hot
 /public/storage
 /storage/*.key
-
+/vendor
 /News-Laravel
 .env
 .env.backup
