@@ -13,17 +13,11 @@ use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         // Force HTTPS in production
@@ -31,80 +25,88 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
         
-        // Use Bootstrap for pagination
         Paginator::useBootstrap();
         
-        // STEP 1: Run database setup first
-        $this->runDatabaseSetup();
+        // Run safe database setup
+        $this->safeDatabaseSetup();
         
-        // STEP 2: Then load settings
+        // Load settings
         $this->initializeSettings();
     }
     
-    /**
-     * Run database migrations and seeders
-     */
-    protected function runDatabaseSetup(): void
+    protected function safeDatabaseSetup(): void
     {
-        // Only run in production
-        if (!app()->environment('production')) {
-            return;
-        }
-        
-        try {
-            Log::info('Checking database setup...');
-            
-            // Check if migrations table exists
-            if (!Schema::hasTable('migrations')) {
-                Log::info('Running migrations...');
-                
-                // Run migrations
-                \Artisan::call('migrate --force --no-interaction');
-                $migrationOutput = \Artisan::output();
-                Log::info('Migration output: ' . $migrationOutput);
-                
-                // Wait a moment for migrations to complete
-                sleep(2);
-                
-                Log::info('Running AdminSeeder...');
-                
-                // Run seeder
-                \Artisan::call('db:seed --class=AdminSeeder --force --no-interaction');
-                $seederOutput = \Artisan::output();
-                Log::info('Seeder output: ' . $seederOutput);
-                
-                Log::info('Database setup completed successfully');
-            } else {
-                Log::info('Migrations table already exists, skipping setup');
-            }
-            
-        } catch (\Exception $e) {
-            Log::error('Database setup failed: ' . $e->getMessage());
-            Log::error('Full error: ' . $e->getFile() . ':' . $e->getLine() . ' - ' . $e->getTraceAsString());
+        // NEVER use migrate:fresh in production automatically!
+        if ($this->app->environment('production')) {
+            $this->productionDatabaseSetup();
+        } else {
+            $this->developmentDatabaseSetup();
         }
     }
     
-    /**
-     * Load settings from database
-     */
+    protected function productionDatabaseSetup(): void
+    {
+        try {
+            Log::info('Starting production database setup');
+            
+            // Test database connection
+            DB::connection()->getPdo();
+            
+            // Check if we need to migrate
+            if (!Schema::hasTable('migrations')) {
+                Log::info('First-time setup detected, running migrations...');
+                \Artisan::call('migrate --force --no-interaction');
+                
+                Log::info('Seeding initial data...');
+                \Artisan::call('db:seed --class=AdminSeeder --force --no-interaction');
+                
+                Log::info('Production database setup completed');
+            } else {
+                // Run only pending migrations
+                \Artisan::call('migrate --force --no-interaction');
+                Log::info('Production migrations completed');
+            }
+            
+        } catch (\Exception $e) {
+            Log::error('Production database setup failed: ' . $e->getMessage());
+        }
+    }
+    
+    protected function developmentDatabaseSetup(): void
+    {
+        try {
+            // For development, you can use fresh if needed
+            $shouldFresh = env('DB_FRESH', false);
+            
+            if ($shouldFresh) {
+                Log::warning('Development fresh install starting...');
+                \Artisan::call('migrate:fresh --force --no-interaction');
+                \Artisan::call('db:seed --class=AdminSeeder --force --no-interaction');
+                Log::info('Development fresh install completed');
+            } else {
+                \Artisan::call('migrate --force --no-interaction');
+                Log::info('Development migrations completed');
+            }
+            
+        } catch (\Exception $e) {
+            Log::error('Development database setup failed: ' . $e->getMessage());
+        }
+    }
+    
     protected function initializeSettings(): void
     {
-        $settings = [];
-        
         try {
-            // Check if settings table exists
             if (Schema::hasTable('settings')) {
-                Log::info('Loading settings from database...');
                 $settings = Setting::pluck('value', 'key')->toArray();
-                Log::info('Loaded ' . count($settings) . ' settings');
             } else {
-                Log::warning('Settings table does not exist yet');
+                $settings = [];
+                Log::warning('Settings table not found');
             }
         } catch (\Exception $e) {
+            $settings = [];
             Log::error('Failed to load settings: ' . $e->getMessage());
         }
         
-        // Share settings with all views
         View::composer('*', function($view) use ($settings) {
             $view->with('settings', $settings);
         });
