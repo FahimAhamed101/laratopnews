@@ -24,36 +24,32 @@
                     @endif
                 </div>
 
-                <p class="footer-bio text-white-50 mb-4" style="font-size: 14px; line-height: 1.75; max-width: 360px;">
-                    {{ @$footerInfo->description ?: 'Extremis News delivers breaking global news, verified investigative reports, and in-depth political and economic analysis with uncompromising journalistic integrity.' }}
+                <p class="footer-bio text-white-50 mb-3" style="font-size: 14px; line-height: 1.75; max-width: 360px;">
+                    {{ @$footerInfo->description ?: 'Extremis News delivers timely, verified reporting and deep analysis on global and local affairs.' }}
                 </p>
 
-                <!-- Social Media -->
-                <div class="footer-social">
-                    <ul class="list-inline d-flex flex-wrap align-items-center mb-0" style="gap: 8px;">
-                        @if ($socialLinks && count($socialLinks) > 0)
-                            @foreach ($socialLinks as $link)
-                                <li class="list-inline-item m-0">
-                                    <a href="{{ normalizeStoredUrl($link->url) }}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="{{ $link->name ?? 'Social Link' }}">
-                                        <i class="{{ $link->icon }}"></i>
-                                    </a>
-                                </li>
-                            @endforeach
-                        @else
-                            <li class="list-inline-item m-0"><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn"><i class="fab fa-facebook-f"></i></a></li>
-                            <li class="list-inline-item m-0"><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn"><i class="fab fa-twitter"></i></a></li>
-                            <li class="list-inline-item m-0"><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn"><i class="fab fa-linkedin-in"></i></a></li>
-                            <li class="list-inline-item m-0"><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn"><i class="fab fa-youtube"></i></a></li>
-                        @endif
-                    </ul>
+                <!-- Social Media Horizontal Row -->
+                <div class="footer-social-wrap">
+                    @if ($socialLinks && count($socialLinks) > 0)
+                        @foreach ($socialLinks as $link)
+                            <a href="{{ normalizeStoredUrl($link->url) }}" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="{{ $link->name ?? 'Social Link' }}">
+                                <i class="{{ $link->icon }}"></i>
+                            </a>
+                        @endforeach
+                    @else
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn"><i class="fab fa-twitter"></i></a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn"><i class="fab fa-youtube"></i></a>
+                    @endif
                 </div>
             </div>
 
-            <!-- Col 2: Grid One -->
+            <!-- Col 2: Grid One (Company) -->
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4 mb-lg-0">
                 <div class="footer-nav-widget">
                     <h5 class="footer-widget-title text-white font-weight-bold position-relative pb-2 mb-3">
-                        {{ @$footerGridOneTitle->value ?: __('frontend.Quick Links') }}
+                        {{ @$footerGridOneTitle->value ?: 'Company' }}
                     </h5>
                     <ul class="list-unstyled footer-nav-links mb-0">
                         @if ($footerGridOne && count($footerGridOne) > 0)
@@ -74,11 +70,11 @@
                 </div>
             </div>
 
-            <!-- Col 3: Grid Two -->
+            <!-- Col 3: Grid Two (Categories) -->
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4 mb-lg-0">
                 <div class="footer-nav-widget">
                     <h5 class="footer-widget-title text-white font-weight-bold position-relative pb-2 mb-3">
-                        {{ @$footerGridTwoTitle->value ?: __('frontend.Categories') }}
+                        {{ @$footerGridTwoTitle->value ?: 'Categories' }}
                     </h5>
                     <ul class="list-unstyled footer-nav-links mb-0">
                         @if ($footerGridTwo && count($footerGridTwo) > 0)
@@ -91,19 +87,19 @@
                             @endforeach
                         @else
                             <li><a href="{{ route('news') }}?category=national"><i class="fa fa-angle-right mr-2 text-white-50"></i>National</a></li>
-                            <li><a href="{{ route('news') }}?category=world"><i class="fa fa-angle-right mr-2 text-white-50"></i>World News</a></li>
-                            <li><a href="{{ route('news') }}?category=business"><i class="fa fa-angle-right mr-2 text-white-50"></i>Business & Economy</a></li>
+                            <li><a href="{{ route('news') }}?category=business"><i class="fa fa-angle-right mr-2 text-white-50"></i>Business</a></li>
                             <li><a href="{{ route('news') }}?category=technology"><i class="fa fa-angle-right mr-2 text-white-50"></i>Technology</a></li>
+                            <li><a href="{{ route('news') }}?category=sports"><i class="fa fa-angle-right mr-2 text-white-50"></i>Sports</a></li>
                         @endif
                     </ul>
                 </div>
             </div>
 
-            <!-- Col 4: Grid Three -->
+            <!-- Col 4: Grid Three (Quick Links) -->
             <div class="col-lg-2 col-md-6 col-sm-6 mb-4 mb-lg-0">
                 <div class="footer-nav-widget">
                     <h5 class="footer-widget-title text-white font-weight-bold position-relative pb-2 mb-3">
-                        {{ @$footerGridThreeTitle->value ?: __('frontend.Legal & Info') }}
+                        {{ @$footerGridThreeTitle->value ?: 'Quick Links' }}
                     </h5>
                     <ul class="list-unstyled footer-nav-links mb-0">
                         @if ($footerGridThree && count($footerGridThree) > 0)
@@ -127,27 +123,27 @@
     </div>
 
     <!-- Footer Bottom Strip -->
-    <div class="footer-bottom-strip py-3" style="border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(0, 0, 0, 0.2);">
+    <div class="footer-bottom-strip py-3" style="border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(0, 0, 0, 0.25);">
         <div class="container">
             <div class="row align-items-center">
                 <!-- Copyright Fahim -->
-                <div class="col-md-6 text-center text-md-left mb-2 mb-md-0">
-                    <p class="mb-0 text-white-50" style="font-size: 13.5px;">
+                <div class="col-lg-6 col-md-5 text-center text-md-left mb-2 mb-md-0">
+                    <p class="mb-0 text-white-50 footer-copyright-text">
                         {{ localizeNumber(@$footerInfo->copyright ?: ('Copyright © ' . date('Y') . ' Fahim. All rights reserved.')) }}
                     </p>
                 </div>
 
-                <!-- Footer Bottom Links -->
-                <div class="col-md-6 text-center text-md-right">
-                    <ul class="list-inline mb-0" style="font-size: 13px;">
-                        <li class="list-inline-item"><a href="{{ route('privacy-policy') }}" class="footer-sub-link">Privacy Policy</a></li>
-                        <li class="list-inline-item text-white-50">&bull;</li>
-                        <li class="list-inline-item"><a href="{{ route('terms-of-service') }}" class="footer-sub-link">Terms of Service</a></li>
-                        <li class="list-inline-item text-white-50">&bull;</li>
-                        <li class="list-inline-item"><a href="{{ route('sitemap') }}" class="footer-sub-link" target="_blank">Sitemap</a></li>
-                        <li class="list-inline-item text-white-50">&bull;</li>
-                        <li class="list-inline-item"><a href="javascript:void(0)" id="open-cookie-settings" class="footer-sub-link">{{ __('frontend.cookie_preferences') }}</a></li>
-                    </ul>
+                <!-- Footer Bottom Legal Links (Clean Horizontal Row) -->
+                <div class="col-lg-6 col-md-7 text-center text-md-right">
+                    <div class="footer-legal-links">
+                        <a href="{{ route('privacy-policy') }}" class="footer-sub-link">Privacy Policy</a>
+                        <span class="footer-link-divider">&bull;</span>
+                        <a href="{{ route('terms-of-service') }}" class="footer-sub-link">Terms of Service</a>
+                        <span class="footer-link-divider">&bull;</span>
+                        <a href="{{ route('sitemap') }}" class="footer-sub-link" target="_blank">Sitemap</a>
+                        <span class="footer-link-divider">&bull;</span>
+                        <a href="javascript:void(0)" id="open-cookie-settings" class="footer-sub-link">{{ __('frontend.cookie_preferences') }}</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,8 +171,14 @@
     background: var(--colorPrimary, #dc2626);
     border-radius: 2px;
 }
+.footer-nav-links {
+    padding-left: 0 !important;
+    list-style: none !important;
+}
 .footer-nav-links li {
-    margin-bottom: 10px;
+    margin-bottom: 10px !important;
+    width: 100% !important;
+    display: block !important;
 }
 .footer-nav-links li a {
     color: rgba(255, 255, 255, 0.7) !important;
@@ -197,43 +199,91 @@
 .footer-nav-links li a:hover i {
     color: var(--colorPrimary, #dc2626) !important;
 }
+
+/* Social Media Icons: Guaranteed Horizontal Row */
+.footer-social-wrap {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-top: 15px !important;
+    padding: 0 !important;
+}
 .footer-social-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(255, 255, 255, 0.08) !important;
     color: #ffffff !important;
-    font-size: 14px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 14px !important;
+    text-decoration: none !important;
+    transition: all 0.25s ease !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 .footer-social-btn:hover {
-    background: var(--colorPrimary, #dc2626);
+    background: var(--colorPrimary, #dc2626) !important;
+    border-color: var(--colorPrimary, #dc2626) !important;
     color: #ffffff !important;
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
-    border-color: transparent;
-    text-decoration: none;
+    text-decoration: none !important;
+}
+
+/* Footer Bottom: Guaranteed Horizontal Legal Links */
+.footer-copyright-text {
+    font-size: 13.5px !important;
+    line-height: 1.5 !important;
+}
+.footer-legal-links {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 14px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.footer-link-divider {
+    color: rgba(255, 255, 255, 0.35) !important;
+    font-size: 12px !important;
+    line-height: 1 !important;
+    user-select: none !important;
+    margin: 0 !important;
 }
 .footer-sub-link {
-    color: rgba(255, 255, 255, 0.65) !important;
-    text-decoration: none;
-    transition: color 0.2s ease;
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
 }
 .footer-sub-link:hover {
     color: #ffffff !important;
-    text-decoration: underline;
+    text-decoration: underline !important;
 }
+
 @media (max-width: 767.98px) {
     .footer-custom {
         text-align: left;
     }
     .footer-widget-title {
-        margin-top: 10px;
+        margin-top: 15px;
+    }
+    .footer-legal-links {
+        justify-content: center !important;
+        gap: 10px !important;
+        margin-top: 8px !important;
     }
 }
 </style>
