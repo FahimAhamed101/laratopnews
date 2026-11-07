@@ -52,7 +52,7 @@
                                             data-target="#exampleModal-{{ $message->id }}"><i
                                                 class="fas fa-envelope"></i></a>
 
-                                        <a href="{{ route('admin.social-link.destroy', $message->id) }}"
+                                        <a href="{{ route('admin.contact-message.destroy', $message->id) }}"
                                             class="btn btn-danger delete-item"><i class="fas fa-trash-alt"></i></a>
 
                                     </td>
@@ -83,7 +83,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('admin.contact.send-replay') }}" method="POST">
+                        <form action="{{ route('admin.contact.send-reply') }}" method="POST">
                             @csrf
                             <div class="form-group">
                                 <label for="">{{ __('admin.Subject') }}</label>

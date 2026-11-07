@@ -1,0 +1,23 @@
+{
+    "Reader Desk": "পাঠক ডেস্ক",
+    "Good to see you": "আপনাকে স্বাগতম",
+    "Track your submissions, follow the latest stories, and help the newsroom spot important local updates.": "আপনার জমা দেওয়া সংবাদ ট্র্যাক করুন, সর্বশেষ খবর পড়ুন এবং গুরুত্বপূর্ণ স্থানীয় সংবাদ প্রকাশে সহায়তা করুন।",
+    "Submit News": "সংবাদ জমা দিন",
+    "Browse News": "সংবাদ পড়ুন",
+    "No news has been published for this language yet.": "এই ভাষার জন্য এখনও কোনো সংবাদ প্রকাশিত হয়নি।",
+    "Reader Submission": "পাঠকের লেখা",
+    "Submit News for Review": "পর্যালোচনার জন্য সংবাদ জমা দিন",
+    "Back to Dashboard": "ড্যাশবোর্ডে ফিরে যান",
+    "Category": "বিভাগ",
+    "Choose a category": "একটি বিভাগ নির্বাচন করুন",
+    "Headline": "শিরোনাম",
+    "Main Image": "প্রধান ছবি",
+    "Upload a clear image. The editorial team can replace it before publishing if needed.": "একটি স্পষ্ট ছবি আপলোড করুন। প্রয়োজনে প্রকাশের আগে সম্পাদকীয় টিম এটি পরিবর্তন করতে পারে।",
+    "Story Details": "সংবাদের বিস্তারিত",
+    "Include who, what, when, where, and why. Submitted news remains pending until an admin approves it.": "কী, কে, কখন, কোথায় এবং কেন সম্পর্কিত তথ্য অন্তর্ভুক্ত করুন। অ্যাডমিন অনুমোদন না করা পর্যন্ত জমা দেওয়া সংবাদ পেন্ডিং থাকবে।",
+    "Tags": "ট্যাগসমূহ",
+    "Separate tags with commas.": "কমা দিয়ে ট্যাগগুলো আলাদা করুন।",
+    "Submit for Review": "পর্যালোচনার জন্য জমা দিন",
+    "total": "মোট",
+    "views": "ভিউ"
+}

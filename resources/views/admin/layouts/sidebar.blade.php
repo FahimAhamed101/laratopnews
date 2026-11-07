@@ -5,10 +5,22 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="index.html">Admin</a>
+            <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center justify-content-center h-100 px-3">
+                @if (!empty($settings['site_logo']) && file_exists(public_path($settings['site_logo'])))
+                    <img src="{{ asset($settings['site_logo']) }}?v={{ filemtime(public_path($settings['site_logo'])) }}" alt="{{ $settings['site_name'] ?? 'Logo' }}" style="max-height: 38px; max-width: 160px; object-fit: contain;">
+                @else
+                    <span class="font-weight-bold text-dark">{{ $settings['site_name'] ?? 'Admin' }}</span>
+                @endif
+            </a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
-            <a href="index.html">Ad</a>
+            <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center justify-content-center h-100">
+                @if (!empty($settings['site_favicon']) && file_exists(public_path($settings['site_favicon'])))
+                    <img src="{{ asset($settings['site_favicon']) }}?v={{ filemtime(public_path($settings['site_favicon'])) }}" alt="{{ $settings['site_name'] ?? 'Logo' }}" style="max-height: 28px; max-width: 28px; object-fit: contain;">
+                @else
+                    {{ substr($settings['site_name'] ?? 'EN', 0, 2) }}
+                @endif
+            </a>
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">{{ __('admin.Dashboard') }}</li>
@@ -25,7 +37,7 @@
             @endif
 
             @if (canAccess(['news index']))
-                <li class="dropdown {{ setSidebarActive(['admin.news.*', 'admin.pending.news']) }}">
+                <li class="dropdown {{ setSidebarActive(['admin.news.*', 'admin.pending.news.*']) }}">
                     <a href="#" class="nav-link has-dropdown"><i class="fas fa-newspaper"></i>
                         <span>{{ __('admin.News') }}</span></a>
                     <ul class="dropdown-menu">
@@ -33,8 +45,10 @@
                                 href="{{ route('admin.news.index') }}">{{ __('admin.All News') }}</a></li>
 
                         <li class="{{ setSidebarActive(['admin.pending.news.*']) }}"><a class="nav-link"
-                                href="{{ route('admin.pending-news') }}">{{ __('admin.Pending News') }}</a></li>
+                                href="{{ route('admin.pending.news.index') }}">{{ __('admin.Pending News') }}</a></li>
 
+                        <li class="{{ setSidebarActive(['admin.ai-news.*']) }}"><a class="nav-link text-primary font-weight-bold"
+                                href="{{ route('admin.ai-news.index') }}"><i class="fas fa-robot"></i> {{ __('admin.AI Auto-Poster') }}</a></li>
                     </ul>
                 </li>
             @endif
@@ -83,21 +97,6 @@
                         <span>{{ __('admin.Advertisement') }}</span></a></li>
             @endif
 
-            @if (canAccess(['languages index']))
-                <li
-                    class="dropdown
-                {{ setSidebarActive(['admin.language.*']) }}
-            ">
-                    <a href="#" class="nav-link has-dropdown"><i class="fas fa-language"></i>
-                        <span>{{ __('admin.Languages') }}</span></a>
-                    <ul class="dropdown-menu">
-                        <li class="{{ setSidebarActive(['admin.language.*']) }}"><a class="nav-link"
-                                href="{{ route('admin.language.index') }}">
-                                <span>{{ __('admin.Languages') }}</span></a></li>
-                    </ul>
-                </li>
-            @endif
-
             @if (canAccess(['subscribers index']))
                 <li class="{{ setSidebarActive(['admin.subscribers.*']) }}"><a class="nav-link"
                         href="{{ route('admin.subscribers.index') }}"><i class="fas fa-users"></i>
@@ -116,7 +115,7 @@
             ]) }}
         ">
                     <a href="#" class="nav-link has-dropdown"><i class="far fa-file-alt"></i>
-                        <span>{{ __('admin.Footer') }} {{ __('admin.Setting') }}</span></a>
+                        <span>{{ __('admin.Footer Setting') }}</span></a>
                     <ul class="dropdown-menu">
                         <li class="{{ setSidebarActive(['admin.social-link.*']) }}"><a class="nav-link"
                                 href="{{ route('admin.social-link.index') }}">{{ __('admin.Social Links') }}</a></li>

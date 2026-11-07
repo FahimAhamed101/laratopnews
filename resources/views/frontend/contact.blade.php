@@ -13,7 +13,7 @@
                                 <i class="fa fa-home"></i> {{ __('frontend.Home') }}</a>
                         </li>
                         <li class="breadcrumbs__item">
-                            <a href="javascript:;" class="breadcrumbs__url">{{ __('frontend.Contact') }}</a>
+                            <span class="breadcrumbs__url">{{ __('frontend.Contact') }}</span>
                         </li>
 
                     </ul>
@@ -102,15 +102,27 @@
                         <div class="social__media">
                             <h5>{{ __('frontend.find us') }}</h5>
                             <ul class="list-inline">
-                                @foreach ($socials as $social)
+                                @forelse ($socials as $social)
                                     <li class="list-inline-item-contact mx-1">
-                                        <a href="https://www.linkedin.com/"
-                                            class="btn btn-social rounded text-white facebook">
+                                        <a href="{{ normalizeStoredUrl($social->url) }}" target="_blank" rel="noopener noreferrer"
+                                            class="btn btn-social rounded text-white facebook" title="{{ $social->url }}">
                                             <i class="{{ $social->icon }}"></i>
                                         </a>
                                     </li>
-                                @endforeach
-
+                                @empty
+                                    <li class="list-inline-item-contact mx-1">
+                                        <a href="https://www.linkedin.com/in/fahimahamedweb" target="_blank" rel="noopener noreferrer"
+                                            class="btn btn-social rounded text-white facebook" title="LinkedIn">
+                                            <i class="fab fa-linkedin-in"></i>
+                                        </a>
+                                    </li>
+                                    <li class="list-inline-item-contact mx-1">
+                                        <a href="https://fahimweb.com" target="_blank" rel="noopener noreferrer"
+                                            class="btn btn-social rounded text-white facebook" title="FahimWeb">
+                                            <i class="fa fa-globe"></i>
+                                        </a>
+                                    </li>
+                                @endforelse
                             </ul>
                         </div>
 

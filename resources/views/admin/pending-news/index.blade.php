@@ -14,12 +14,12 @@
 
             @php
                 if (canAccess(['news all-access'])) {
-                    $news = \App\Models\News::with('category')
+                    $news = \App\Models\News::with(['category', 'submittedBy'])
                         ->where('is_approved', 0)
                         ->orderBy('id', 'DESC')
                         ->get();
                 } else {
-                    $news = \App\Models\News::with('category')
+                    $news = \App\Models\News::with(['category', 'submittedBy'])
                         ->where('is_approved', 0)
                         ->where(
                             'author_id',
@@ -42,6 +42,7 @@
                                 <th>{{ __('admin.Image') }}</th>
                                 <th>{{ __('admin.Title') }}</th>
                                 <th>{{ __('admin.Category') }}</th>
+                                <th>{{ __('Submitted By') }}</th>
                                 <th>{{ __('admin.Approve') }}</th>
 
                                 <th>{{ __('admin.Action') }}</th>
@@ -57,6 +58,7 @@
 
                                     <td>{{ $item->title }}</td>
                                     <td>{{ $item->category->name }}</td>
+                                    <td>{{ $item->submittedBy?->name ?? __('Editorial Team') }}</td>
                                     <td>
                                         <form action="" id="approve_form">
                                             <input type="hidden" name="id" value="{{ $item->id }}">
@@ -74,8 +76,12 @@
                                                 class="fas fa-edit"></i></a>
                                         <a href="{{ route('admin.news.destroy', $item->id) }}"
                                             class="btn btn-danger delete-item"><i class="fas fa-trash-alt"></i></a>
-                                        <a href="{{ route('admin.news-copy', $item->id) }}" class="btn btn-primary"><i
-                                                class="fas fa-copy"></i></i></a>
+                                        <form action="{{ route('admin.news.copy', $item->id) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary"><i
+                                                    class="fas fa-copy"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

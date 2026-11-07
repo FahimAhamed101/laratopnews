@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('language');
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('author_id')->constrained('admins');
+            $table->foreignId('submitted_by_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->text('image');
             $table->string('title');
             $table->text('slug');
@@ -27,7 +28,7 @@ return new class extends Migration
             $table->boolean('show_at_popular')->default(0);
             $table->boolean('is_approved')->default(0);
             $table->boolean('status')->default(0);
-            $table->boolean('views')->default(0);
+            $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
         });
     }

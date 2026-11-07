@@ -68,7 +68,7 @@
                                     @enderror
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="{{ __('frontend.Password') }}" type="password" name="password_confirmation">
+                                    <input class="form-control" placeholder="{{ __('frontend.Confirm Password') }}" type="password" name="password_confirmation">
                                 </div>
 
                                 <div class="form-group">

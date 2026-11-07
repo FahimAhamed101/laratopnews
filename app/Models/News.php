@@ -34,6 +34,10 @@ class News extends Model
         return $this->belongsTo(Admin::class);
     }
 
+    public function submittedBy(){
+        return $this->belongsTo(User::class, 'submitted_by_user_id');
+    }
+
     public function comments(){
         return $this->hasMany(Comment::class);
     }

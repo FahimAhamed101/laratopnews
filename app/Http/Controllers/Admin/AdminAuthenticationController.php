@@ -22,7 +22,10 @@ class AdminAuthenticationController extends Controller
 
     public function handleLogin(HandleLoginRequest $request){
         $request->authenticate();
-        return redirect()->route('admin.dashboard');
+
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
     public function logout(Request $request):RedirectResponse{

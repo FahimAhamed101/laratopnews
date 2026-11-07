@@ -39,8 +39,13 @@
                     <div
                         class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
                         <div class="login-brand">
-                            <img src="{{ asset('admin/assets/img/stisla-fill.svg') }}" alt="logo" width="100"
-                                class="shadow-light rounded-circle">
+                            <a href="{{ url('/') }}">
+                                @if (!empty($settings['site_logo']) && file_exists(public_path($settings['site_logo'])))
+                                    <img src="{{ asset($settings['site_logo']) }}?v={{ filemtime(public_path($settings['site_logo'])) }}" alt="{{ $settings['site_name'] ?? 'Logo' }}" style="max-height: 55px; max-width: 220px; object-fit: contain;">
+                                @else
+                                    <img src="{{ asset('admin/assets/img/stisla-fill.svg') }}" alt="logo" width="100" class="shadow-light rounded-circle">
+                                @endif
+                            </a>
                         </div>
 
                         <div class="card card-primary">

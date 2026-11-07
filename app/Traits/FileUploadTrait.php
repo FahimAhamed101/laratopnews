@@ -3,38 +3,55 @@
 namespace App\Traits;
 
 use Illuminate\Http\Request;
-use File;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 trait FileUploadTrait
 {
-    public function handleFileUpload(Request $request, string $fieldName, ?string $oldPath = null, string $dir = 'uploads'): ?String
+    public function handleFileUpload(Request $request, string $inputName, ?string $oldPath = null, string $directory = 'uploads'): ?string
     {
-        //Check request has file
-        if(!$request->hasFile($fieldName)){
+        if (! $request->hasFile($inputName)) {
             return null;
         }
 
-        //Delete the existing image if have
-        if($oldPath && File::exists(public_path($oldPath))){
-            File::delete(public_path($oldPath));
+        $file = $request->file($inputName);
+
+        if (! $file->isValid()) {
+            return null;
         }
 
-        $file = $request->file($fieldName);
+        if (! empty($oldPath)) {
+            $this->deleteFile($oldPath);
+        }
+
         $extension = $file->getClientOriginalExtension();
-        $updatedFileName = \Str::random(30).'.'.$extension;
+        $filename = Str::random(30) . '.' . $extension;
 
-        $file->move(public_path($dir), $updatedFileName);
+        $targetDir = public_path($directory);
+        if (! File::isDirectory($targetDir)) {
+            File::makeDirectory($targetDir, 0777, true, true);
+        }
 
-        $filePath = $dir.'/'.$updatedFileName;
+        $file->move($targetDir, $filename);
 
-        return $filePath;
+        return $directory . '/' . $filename;
     }
 
-    //Handle delete file
+    public function deleteFile(?string $path): void
+    {
+        if (empty($path)) {
+            return;
+        }
 
-    public function deleteFile(string $path):void{
-        if($path && File::exists(public_path($path))){
-            File::delete(public_path($path));
+        $cleanPath = ltrim($path, '/\\');
+
+        if (File::exists(public_path($cleanPath))) {
+            @File::delete(public_path($cleanPath));
+        }
+
+        if (Storage::disk('public')->exists($cleanPath)) {
+            Storage::disk('public')->delete($cleanPath);
         }
     }
 }

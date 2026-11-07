@@ -29,13 +29,13 @@
                                                 <div class="card__post__author-info">
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item">
-                                                            <a href="javascript;">
-                                                                {{ __('frontend.by') }} {{ $slider->author->name }}
-                                                            </a>
+                                                            <span>
+                                                                {{ __('frontend.by') }} {{ $slider->author?->name ?? 'Editorial Desk' }}
+                                                            </span>
                                                         </li>
                                                         <li class="list-inline-item">
                                                             <span>
-                                                                {{ date('M, d, Y H:i', strtotime($slider->created_at)) }}
+                                                                {{ localizeDate($slider->created_at, 'M, d, Y H:i') }}
                                                             </span>
                                                         </li>
                                                     </ul>
@@ -74,13 +74,13 @@
                                             <div class="card__post__author-info">
                                                 <ul class="list-inline">
                                                     <li class="list-inline-item">
-                                                        <a href="javascript:;">
-                                                            by {{ $slider->author->name }}
-                                                        </a>
+                                                        <span>
+                                                            {{ __('frontend.by') }} {{ $slider->author?->name ?? 'Editorial Desk' }}
+                                                        </span>
                                                     </li>
                                                     <li class="list-inline-item">
                                                         <span>
-                                                            {{ date('M d, Y', strtotime($slider->created_at)) }}
+                                                            {{ localizeDate($slider->created_at, 'M d, Y') }}
                                                         </span>
                                                     </li>
                                                 </ul>

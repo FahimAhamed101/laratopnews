@@ -1,20 +1,127 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="{{ getLanguage() }}">
 
 <head>
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@hasSection('title') @yield('title') @else {{ $settings['site_seo_title'] }} @endif </title>
-    <meta name="description" content="@hasSection('meta_description') @yield('meta_description') @else {{ $settings['site_seo_description'] }} @endif " />
-    <meta name="keywords" content="{{ $settings['site_seo_keywords'] }}" />
+    <meta name="google-site-verification" content="7D5GsLCJIj5u-4aD5whqMuZuQK5y5czs2M-JKQ6Qybk" />
 
-    <meta name="og:title" content="@yield('meta_og_title')" />
-    <meta name="og:description" content="@yield('meta_og_description')" />
-    <meta name="og:image" content="@hasSection('meta_og_image') @yield('meta_og_image') @else {{ asset($settings['site_logo']) }} @endif" />
-    <meta name="twitter:title" content="@yield('meta_tw_title')" />
-    <meta name="twitter:description" content="@yield('meta_tw_description')" />
-    <meta name="twitter:image" content="@yield('meta_tw_image')" />
+    <!-- Google Consent Mode v2 (GDPR / EEA / UK / California AdSense Compliance) -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+
+        (function() {
+            var consent = null;
+            try {
+                consent = localStorage.getItem('cookie_consent') ||
+                    (document.cookie.match(/(?:^|;\s*)cookie_consent=([^;]+)/) || [])[1];
+            } catch(e) {}
+
+            if (consent === 'accepted') {
+                gtag('consent', 'default', {
+                    'ad_storage': 'granted',
+                    'ad_user_data': 'granted',
+                    'ad_personalization': 'granted',
+                    'analytics_storage': 'granted',
+                    'functionality_storage': 'granted',
+                    'personalization_storage': 'granted',
+                    'security_storage': 'granted',
+                    'wait_for_update': 500
+                });
+            } else {
+                gtag('consent', 'default', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied',
+                    'analytics_storage': 'denied',
+                    'functionality_storage': 'granted',
+                    'personalization_storage': 'denied',
+                    'security_storage': 'granted',
+                    'wait_for_update': 500
+                });
+            }
+        })();
+
+        gtag('js', new Date());
+        gtag('config', 'G-HM30KCBC8K');
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HM30KCBC8K"></script>
+
+    <title>@hasSection('title') @yield('title') @else {{ $settings['site_seo_title'] ?? 'Extremis News - Verified News & Analysis' }} @endif</title>
+    <meta name="description" content="@hasSection('meta_description') @yield('meta_description') @else {{ $settings['site_seo_description'] ?? 'Extremis News delivers breaking global news, investigative reports, and in-depth analysis.' }} @endif" />
+    <meta name="keywords" content="{{ $settings['site_seo_keywords'] ?? 'news, breaking news, technology, world affairs, economy' }}" />
+    <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')" />
+    <link rel="canonical" href="@yield('canonical_url', url()->current())" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:site_name" content="{{ $settings['site_name'] ?? 'Extremis News' }}" />
+    <meta property="og:type" content="@yield('og_type', 'website')" />
+    <meta property="og:url" content="@yield('canonical_url', url()->current())" />
+    <meta property="og:locale" content="{{ getLanguage() === 'bn' ? 'bn_BD' : 'en_US' }}" />
+    <meta property="og:title" content="@yield('meta_og_title', View::yieldContent('title', $settings['site_seo_title'] ?? ($settings['site_name'] ?? 'Extremis News')))" />
+    <meta property="og:description" content="@yield('meta_og_description', View::yieldContent('meta_description', $settings['site_seo_description'] ?? ''))" />
+    <meta property="og:image" content="@yield('meta_og_image', asset($settings['site_logo']))" />
+    @hasSection('article_published_time')
+    <meta property="article:published_time" content="@yield('article_published_time')" />
+    @endif
+    @hasSection('article_modified_time')
+    <meta property="article:modified_time" content="@yield('article_modified_time')" />
+    @endif
+    @hasSection('article_section')
+    <meta property="article:section" content="@yield('article_section')" />
+    @endif
+    @hasSection('article_author')
+    <meta property="article:author" content="@yield('article_author')" />
+    @endif
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@yield('meta_tw_title', View::yieldContent('title', $settings['site_seo_title'] ?? ($settings['site_name'] ?? 'Extremis News')))" />
+    <meta name="twitter:description" content="@yield('meta_tw_description', View::yieldContent('meta_description', $settings['site_seo_description'] ?? ''))" />
+    <meta name="twitter:image" content="@yield('meta_tw_image', View::yieldContent('meta_og_image', asset($settings['site_logo'])))" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Sitemaps & RSS Feeds -->
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="{{ route('sitemap') }}" />
+    <link rel="alternate" type="application/rss+xml" title="{{ $settings['site_name'] ?? 'Extremis News' }} - RSS Feed" href="{{ route('feed') }}" />
+
+    <!-- Google AdSense Verification & Auto-Ads -->
+    <meta name="google-adsense-account" content="ca-pub-7830531573570855">
+    @php
+        $adSensePubId = config('services.adsense.publisher_id') ?: env('ADSENSE_PUBLISHER_ID', 'pub-7830531573570855');
+    @endphp
+    @if (!empty($adSensePubId))
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-{{ str_replace('ca-', '', trim($adSensePubId)) }}" crossorigin="anonymous"></script>
+    @endif
+
+    <!-- JSON-LD Global Site Schema -->
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@' . 'context' => 'https://schema.org',
+        '@type' => 'NewsMediaOrganization',
+        'name' => $settings['site_name'] ?? 'Extremis News',
+        'url' => url('/'),
+        'logo' => [
+            '@type' => 'ImageObject',
+            'url' => asset($settings['site_logo'] ?? ''),
+        ],
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@' . 'context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        'name' => $settings['site_name'] ?? 'Extremis News',
+        'url' => url('/'),
+        'potentialAction' => [
+            '@type' => 'SearchAction',
+            'target' => route('news') . '?search={search_term_string}',
+            'query-input' => 'required name=search_term_string',
+        ],
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
 
     <link rel="icon" href="{{ asset($settings['site_favicon']) }}" type="image/png">
     <link href="{{ asset('frontend/asset/css/styles.css') }}" rel="stylesheet">
@@ -80,9 +187,57 @@
         });
 
         $(document).ready(function() {
-            /** change language **/
+            /** Ensure user's manual language choice is strictly respected **/
+            (function initializeLanguagePreference() {
+                var manualLang = false;
+                try {
+                    manualLang = localStorage.getItem('manual_language') === 'true';
+                } catch(e) {}
+
+                var cookieVal = (document.cookie.match(/(?:^|;\s*)site_language=([^;]+)/) || [])[1];
+                var manualCookie = (document.cookie.match(/(?:^|;\s*)user_manual_lang=([^;]+)/) || [])[1];
+                var currentServerLang = "{{ getLanguage() }}";
+
+                // If user previously made a manual choice, enforce and protect it
+                if (manualLang || manualCookie === '1') {
+                    try {
+                        var savedLang = localStorage.getItem('site_language') || cookieVal;
+                        if (savedLang && savedLang !== currentServerLang) {
+                            // Synchronize server to the user's explicit saved choice
+                            $.ajax({
+                                method: 'GET',
+                                url: "{{ route('language') }}",
+                                data: { language_code: savedLang },
+                                success: function(data) {
+                                    if (data.status === 'success') {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        }
+                    } catch(e) {}
+                    return;
+                }
+
+                // First-time visit: record the server-detected language into cookie & localStorage without reload
+                try {
+                    localStorage.setItem('site_language', currentServerLang);
+                } catch(e) {}
+                document.cookie = "site_language=" + encodeURIComponent(currentServerLang) + "; path=/; max-age=31536000; SameSite=Lax";
+            })();
+
+            /** Change language manually - permanently saves choice **/
             $('#site-language').on('change', function() {
                 let languageCode = $(this).val();
+
+                try {
+                    localStorage.setItem('manual_language', 'true');
+                    localStorage.setItem('site_language', languageCode);
+                } catch(e) {}
+
+                document.cookie = "site_language=" + encodeURIComponent(languageCode) + "; path=/; max-age=31536000; SameSite=Lax";
+                document.cookie = "user_manual_lang=1; path=/; max-age=31536000; SameSite=Lax";
+
                 $.ajax({
                     method: 'GET',
                     url: "{{ route('language') }}",
@@ -91,14 +246,15 @@
                     },
                     success: function(data) {
                         if (data.status === 'success') {
-                            window.location.href = "{{ url('/') }}";
+                            window.location.reload();
                         }
                     },
                     error: function(data) {
                         console.error(data);
+                        window.location.reload();
                     }
-                })
-            })
+                });
+            });
 
             /** Subscribe Newsletter**/
             $('.newsletter-form').on('submit', function(e) {
@@ -143,6 +299,9 @@
     </script>
 
 
+
+    {{-- GDPR / AdSense Cookie Consent Banner --}}
+    @include('frontend.layouts.cookie-banner')
 
     @stack('content')
 </body>

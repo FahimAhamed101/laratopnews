@@ -17,14 +17,13 @@
                         <ul class="topbar-sosmed p-0">
                             @foreach ($socialLinks as $link)
                             <li>
-                                <a href="{{ $link->url }}"><i class="{{ $link->icon }}"></i></a>
+                                <a href="{{ normalizeStoredUrl($link->url) }}"><i class="{{ $link->icon }}"></i></a>
                             </li>
                             @endforeach
 
                         </ul>
                         <div class="topbar-text">
-
-                            {{ date('l, M j, Y') }}
+                            {{ localizeDate(null, 'l, M j, Y') }}
                         </div>
                     </div>
                 </div>
@@ -39,7 +38,19 @@
                         </div>
 
                         <ul class="topbar-link ml-auto">
-                            @if (!auth()->check())
+                            @if (auth()->guard('admin')->check())
+                            <li><a href="{{ route('admin.dashboard') }}">{{ __('admin.Dashboard') }}</a></li>
+                            <li>
+                                <form method="POST" action="{{ route('admin.logout') }}">
+                                    @csrf
+                                    <a href="#"
+                                        onclick="event.preventDefault();
+                                    this.closest('form').submit();">
+                                        {{ __('frontend.Logout') }}
+                                    </a>
+                                </form>
+                            </li>
+                            @elseif (!auth()->check())
                             <li><a href="{{ route('login') }}">{{ __('frontend.Login') }}</a></li>
                             <li><a href="{{ route('register') }}">{{ __('frontend.Register') }}</a></li>
                             @else
@@ -84,7 +95,7 @@
                 </div>
                 <figure class="mb-0 mx-auto">
                     <a href="{{ url('/') }}">
-                        <img src="{{ asset($settings['site_logo']) }}" alt="" class="img-fluid logo">
+                        <img src="{{ asset($settings['site_logo']) }}?v={{ file_exists(public_path($settings['site_logo'])) ? filemtime(public_path($settings['site_logo'])) : time() }}" alt="{{ $settings['site_name'] ?? 'Extremis News' }}" class="img-fluid logo">
                     </a>
                 </figure>
 
@@ -132,7 +143,7 @@
                                     <div class="row no-gutters mt-3">
                                         <div class="col">
                                             <input class="form-control border-secondary border-right-0 rounded-0"
-                                                type="search" value="" placeholder="Search "
+                                                type="search" value="" placeholder="{{ __('frontend.search') }}"
                                                 id="example-search-input4" name="search">
                                         </div>
                                         <div class="col-auto">
@@ -162,7 +173,7 @@
                             <div class="row no-gutters">
                                 <div class="col">
                                     <input class="form-control border-secondary border-right-0 rounded-0" value=""
-                                        placeholder="Search" type="search" name="search">
+                                        placeholder="{{ __('frontend.search') }}" type="search" name="search">
                                 </div>
                                 <div class="col-auto">
                                     <button type="submit" class="btn btn-outline-secondary border-left-0 rounded-0 rounded-right">
@@ -188,7 +199,7 @@
                             @if (count($categories) > 0)
                             <li class="nav-item">
                                 <a class="nav-link active dropdown-toggle  text-dark" href="#"
-                                    data-toggle="dropdown">More </a>
+                                    data-toggle="dropdown">{{ __('frontend.More') }} </a>
                                 <ul class="dropdown-menu dropdown-menu-left">
                                     @foreach ($categories as $category)
                                     <li><a class="dropdown-item" href="{{ route('news', ['category' => $category->slug]) }}">{{ $category->name }}</a></li>

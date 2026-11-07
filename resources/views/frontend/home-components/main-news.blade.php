@@ -29,13 +29,13 @@
                                                 <div class="card__post__author-info">
                                                     <ul class="list-inline">
                                                         <li class="list-inline-item">
-                                                            <a href="javascript;">
-                                                                {{ __('frontend.by') }} {{ $news->author->name }}
-                                                            </a>
+                                                            <span>
+                                                                {{ __('frontend.by') }} {{ $news->author?->name ?? 'Editorial Desk' }}
+                                                            </span>
                                                         </li>
                                                         <li class="list-inline-item">
                                                             <span>
-                                                                {{ date('M, d, Y H:i', strtotime($news->created_at)) }}
+                                                                {{ localizeDate($news->created_at, 'M, d, Y H:i') }}
                                                             </span>
                                                         </li>
                                                     </ul>
@@ -72,12 +72,12 @@
                                                                 <li class="list-inline-item">
                                                                     <span class="text-primary">
                                                                         {{ __('frontend.by') }}
-                                                                        {{ $news->author->name }}
+                                                                        {{ $news->author?->name ?? 'Editorial Desk' }}
                                                                     </span>
                                                                 </li>
                                                                 <li class="list-inline-item">
                                                                     <span class="text-dark text-capitalize">
-                                                                        {{ date('M d, Y', strtotime($news->created_at)) }}
+                                                                        {{ localizeDate($news->created_at, 'M d, Y') }}
                                                                     </span>
                                                                 </li>
 
@@ -121,12 +121,12 @@
                                                                 <li class="list-inline-item">
                                                                     <span class="text-primary">
                                                                         {{ __('frontend.by') }}
-                                                                        {{ $news->author->name }}
+                                                                        {{ $news->author?->name ?? 'Editorial Desk' }}
                                                                     </span>
                                                                 </li>
                                                                 <li class="list-inline-item">
                                                                     <span class="text-dark text-capitalize">
-                                                                        {{ date('M d, Y', strtotime($news->created_at)) }}
+                                                                        {{ localizeDate($news->created_at, 'M d, Y') }}
                                                                     </span>
                                                                 </li>
 
@@ -161,7 +161,7 @@
                                 <div class="card__post__list">
                                     <div class="list-number">
                                         <span>
-                                            {{ ++$loop->index }}
+                                            {{ localizeNumber(++$loop->index) }}
                                         </span>
                                     </div>
                                     <a href="#" class="category">
@@ -212,12 +212,12 @@
                                     <ul class="list-inline">
                                         <li class="list-inline-item">
                                             <span class="text-primary">
-                                                {{ __('frontend.by') }} {{ $sectionOneNews->author->name }}
+                                                {{ __('frontend.by') }} {{ $sectionOneNews->author?->name ?? 'Editorial Desk' }}
                                             </span>
                                         </li>
                                         <li class="list-inline-item">
                                             <span>
-                                                {{ date('M d, Y', strtotime($sectionOneNews->created_at)) }}
+                                                {{ localizeDate($sectionOneNews->created_at, 'M d, Y') }}
                                             </span>
                                         </li>
 
@@ -266,12 +266,12 @@
                                     <ul class="list-inline">
                                         <li class="list-inline-item">
                                             <span class="text-primary">
-                                                {{ __('frontend.by') }} {{ $sectionTwoNews->author->name }}
+                                                {{ __('frontend.by') }} {{ $sectionTwoNews->author?->name ?? 'Editorial Desk' }}
                                             </span>
                                         </li>
                                         <li class="list-inline-item">
                                             <span>
-                                                {{ date('M d, Y', strtotime($sectionTwoNews->created_at)) }}
+                                                {{ localizeDate($sectionTwoNews->created_at, 'M d, Y') }}
                                             </span>
                                         </li>
 
@@ -320,13 +320,13 @@
                                                         <li class="list-inline-item">
                                                             <span class="text-primary">
                                                                 {{ __('frontend.by') }}
-                                                                {{ $sectionThreeNews->author->name }}
+                                                                {{ $sectionThreeNews->author?->name ?? 'Editorial Desk' }}
                                                             </span>
                                                         </li>
                                                         <li class="list-inline-item">
                                                             <span>
 
-                                                                {{ date('M d, Y', strtotime($sectionThreeNews->created_at)) }}
+                                                                {{ localizeDate($sectionThreeNews->created_at, 'M d, Y') }}
                                                             </span>
                                                         </li>
 
@@ -362,13 +362,13 @@
                                                         <li class="list-inline-item">
                                                             <span class="text-primary">
                                                                 {{ __('frontend.by') }}
-                                                                {{ $sectionThreeNews->author->name }}
+                                                                {{ $sectionThreeNews->author?->name ?? 'Editorial Desk' }}
                                                             </span>
                                                         </li>
                                                         <li class="list-inline-item">
                                                             <span>
 
-                                                                {{ date('M d, Y', strtotime($sectionThreeNews->created_at)) }}
+                                                                {{ localizeDate($sectionThreeNews->created_at, 'M d, Y') }}
                                                             </span>
                                                         </li>
 
@@ -389,10 +389,10 @@
                         </div>
                     </aside>
 
-                    @if ($ad->home_middle_ad_status == 1)
+                    @if ($ad?->home_middle_ad_status == 1)
                         <div class="small_add_banner">
                             <div class="small_add_banner_img">
-                                <a href="{{ $ad->home_middle_ad_url }}">
+                                <a href="{{ normalizeStoredUrl($ad->home_middle_ad_url) }}">
                                     <img src="{{ asset($ad->home_middle_ad) }}" alt="adds">
                                 </a>
                             </div>
@@ -426,13 +426,13 @@
                                                             <li class="list-inline-item">
                                                                 <span class="text-primary">
                                                                     {{ __('frontend.by') }}
-                                                                    {{ $sectionFourNews->author->name }}
+                                                                    {{ $sectionFourNews->author?->name ?? 'Editorial Desk' }}
                                                                 </span>
                                                             </li>
                                                             <li class="list-inline-item">
                                                                 <span class="text-dark text-capitalize">
 
-                                                                    {{ date('M d, Y', strtotime($sectionFourNews->created_at)) }}
+                                                                    {{ localizeDate($sectionFourNews->created_at, 'M d, Y') }}
                                                                 </span>
                                                             </li>
                                                         </ul>
@@ -464,7 +464,7 @@
                     <div class="sticky-top">
                         <aside class="wrapper__list__article">
                             <h4 class="border_section">
-                                {{ __('frontend.Most Viewed') }}t</h4>
+                                {{ __('frontend.Most Viewed') }}</h4>
                             <div class="wrapper__list__article-small">
 
                                 @foreach ($mostViewedPosts as $mostViewPosts)
@@ -484,12 +484,12 @@
                                                 <ul class="list-inline">
                                                     <li class="list-inline-item">
                                                         <span class="text-primary">
-                                                            {{ __('frontend.by') }} {{ $mostViewPosts->author->name }}
+                                                            {{ __('frontend.by') }} {{ $mostViewPosts->author?->name ?? 'Editorial Desk' }}
                                                         </span>
                                                     </li>
                                                     <li class="list-inline-item">
                                                         <span class="text-dark text-capitalize">
-                                                            {{ date('M d, Y', strtotime($mostViewPosts->created_at)) }}
+                                                            {{ localizeDate($mostViewPosts->created_at, 'M d, Y') }}
                                                         </span>
                                                     </li>
 
@@ -527,12 +527,12 @@
                                                                 <li class="list-inline-item">
                                                                     <span class="text-primary">
                                                                         {{ __('frontend.by') }}
-                                                                        {{ $mostViewPosts->author->name }}
+                                                                        {{ $mostViewPosts->author?->name ?? 'Editorial Desk' }}
                                                                     </span>
                                                                 </li>
                                                                 <li class="list-inline-item">
                                                                     <span class="text-dark text-capitalize">
-                                                                        {{ date('M d, Y', strtotime($mostViewPosts->created_at)) }}
+                                                                        {{ localizeDate($mostViewPosts->created_at, 'M d, Y') }}
                                                                     </span>
                                                                 </li>
 
@@ -560,7 +560,7 @@
                             <!-- widget Social media -->
                             <div class="wrap__social__media">
                                 @foreach ($socialCounts as $socialCount)
-                                    <a href="{{ $socialCount->url }}" target="_blank">
+                                    <a href="{{ normalizeStoredUrl($socialCount->url) }}" target="_blank">
                                         <div class="social__media__widget mt-2"
                                             style="background-color:{{ $socialCount->color }}">
                                             <span class="social__media__widget-icon">
@@ -580,14 +580,14 @@
                         </aside>
 
                         <aside class="wrapper__list__article">
-                            <h4 class="border_section">tags</h4>
+                            <h4 class="border_section">{{ __('frontend.tags') }}</h4>
                             <div class="blog-tags p-0">
                                 <ul class="list-inline">
 
                                     @foreach ($mostCommonTags as $tag)
                                         <li class="list-inline-item">
                                             <a href="{{ route('news', ['tag' => $tag->name]) }}">
-                                                #{{ $tag->name }} ({{ $tag->count }})
+                                                #{{ $tag->name }} ({{ localizeNumber($tag->count) }})
                                             </a>
                                         </li>
                                     @endforeach
@@ -596,10 +596,10 @@
                             </div>
                         </aside>
 
-                        @if ($ad->side_bar_ad_status == 1)
+                        @if ($ad?->side_bar_ad_status == 1)
                             <aside class="wrapper__list__article">
                                 <h4 class="border_section">{{ __('frontend.Advertise') }}</h4>
-                                <a href="{{ $ad->side_bar_ad_url }}">
+                                <a href="{{ normalizeStoredUrl($ad->side_bar_ad_url) }}">
                                     <figure>
                                         <img src="{{ asset($ad->side_bar_ad) }}" alt="" class="img-fluid">
                                     </figure>
@@ -619,7 +619,7 @@
                                 <form action="" class="newsletter-form">
                                     <div class="input-group ">
                                         <input type="text" class="form-control" name="email"
-                                            placeholder="Your email address">
+                                            placeholder="{{ __('frontend.Your email address') }}">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary newsletter-button"
                                                 type="submit">{{ __('frontend.sign up') }}</button>

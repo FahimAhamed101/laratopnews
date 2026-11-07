@@ -1,29 +1,145 @@
 @extends('frontend.layouts.master')
 <!-- Setting metas -->
-@section('title', $news->title)
-@section('meta_description', $news->meta_description)
-@section('meta_og_title', $news->meta_title)
-@section('meta_og_description', $news->meta_description)
+@section('title', ($news->meta_title ?: $news->title) . ' | ' . ($settings['site_name'] ?? 'Extremis News'))
+@section('meta_description', $news->meta_description ?: Str::limit(strip_tags($news->content), 160))
+@section('meta_og_title', $news->meta_title ?: $news->title)
+@section('meta_og_description', $news->meta_description ?: Str::limit(strip_tags($news->content), 160))
 @section('meta_og_image', asset($news->image))
-@section('meta_tw_title', $news->meta_title)
-@section('meta_tw_description', $news->meta_description)
+@section('meta_tw_title', $news->meta_title ?: $news->title)
+@section('meta_tw_description', $news->meta_description ?: Str::limit(strip_tags($news->content), 160))
 @section('meta_tw_image', asset($news->image))
+@section('canonical_url', route('news-details', $news->slug))
+@section('og_type', 'article')
+@section('article_published_time', ($news->created_at ?? now())->toIso8601String())
+@section('article_modified_time', ($news->updated_at ?? $news->created_at ?? now())->toIso8601String())
+@section('article_section', $news->category->name ?? 'News')
+@section('article_author', $news->author?->name ?? 'Editorial Desk')
 <!-- End Setting metas -->
+
+@php
+    $words = str_word_count(strip_tags($news->content));
+    $readTime = max(1, ceil($words / 220));
+    $canonicalUrl = route('news-details', $news->slug);
+    $pubDate = ($news->created_at ?? now())->toIso8601String();
+    $modDate = ($news->updated_at ?? $news->created_at ?? now())->toIso8601String();
+
+    // Extract FAQs from content for FAQPage Schema
+    $faqItems = [];
+    if (preg_match_all('/<div class="faq-item"[^>]*>[\s\S]*?<h4[^>]*>([\s\S]*?)<\/h4>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>[\s\S]*?<\/div>/i', $news->content, $matches, PREG_SET_ORDER)) {
+        foreach ($matches as $match) {
+            $q = trim(strip_tags($match[1]));
+            $a = trim(strip_tags($match[2]));
+            if (!empty($q) && !empty($a)) {
+                $faqItems[] = [
+                    '@type' => 'Question',
+                    'name' => $q,
+                    'acceptedAnswer' => [
+                        '@type' => 'Answer',
+                        'text' => $a,
+                    ],
+                ];
+            }
+        }
+    }
+@endphp
+
+@push('content')
+<!-- JSON-LD NewsArticle Structured Data -->
+<script type="application/ld+json">
+{!! json_encode([
+    '@' . 'context' => 'https://schema.org',
+    '@type' => 'NewsArticle',
+    'mainEntityOfPage' => [
+        '@type' => 'WebPage',
+        '@id' => $canonicalUrl,
+    ],
+    'headline' => $news->title,
+    'description' => $news->meta_description ?: Str::limit(strip_tags($news->content), 150),
+    'image' => [ asset($news->image) ],
+    'datePublished' => $pubDate,
+    'dateModified' => $modDate,
+    'author' => [
+        '@type' => 'Person',
+        'name' => $news->author?->name ?? 'Editorial Desk',
+        'url' => 'https://fahimweb.com',
+    ],
+    'publisher' => [
+        '@type' => 'NewsMediaOrganization',
+        'name' => $settings['site_name'] ?? 'Extremis News',
+        'url' => url('/'),
+        'logo' => [
+            '@type' => 'ImageObject',
+            'url' => asset($settings['site_logo'] ?? ''),
+        ],
+        'publishingPrinciples' => route('about'),
+    ],
+    'articleSection' => $news->category->name ?? 'News',
+    'inLanguage' => $news->language === 'bn' ? 'bn-BD' : 'en-US',
+    'wordCount' => $words,
+    'isAccessibleForFree' => true,
+    'keywords' => $news->tags->pluck('name')->toArray(),
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+
+<!-- JSON-LD BreadcrumbList Structured Data -->
+<script type="application/ld+json">
+{!! json_encode([
+    '@' . 'context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    'itemListElement' => [
+        [
+            '@type' => 'ListItem',
+            'position' => 1,
+            'name' => __('frontend.Home'),
+            'item' => route('home'),
+        ],
+        [
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => $news->category->name ?? 'News',
+            'item' => route('news', ['category' => $news->category->slug ?? '']),
+        ],
+        [
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => Str::limit($news->title, 40),
+            'item' => $canonicalUrl,
+        ],
+    ],
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+
+@if (!empty($faqItems))
+<!-- JSON-LD FAQPage Structured Data -->
+<script type="application/ld+json">
+{!! json_encode([
+    '@' . 'context' => 'https://schema.org',
+    '@type' => 'FAQPage',
+    'mainEntity' => $faqItems,
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endif
+@endpush
+
 @section('content')
 
     <section class="pb-80">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <!-- breaddcrumb -->
                     <!-- Breadcrumb -->
                     <ul class="breadcrumbs bg-light mb-4">
                         <li class="breadcrumbs__item">
                             <a href="{{ route('home') }}" class="breadcrumbs__url">
                                 <i class="fa fa-home"></i> {{ __('frontend.Home') }}</a>
                         </li>
+                        @if ($news->category)
                         <li class="breadcrumbs__item">
-                            <a href="javascript:;" class="breadcrumbs__url">{{ __('frontend.News') }}</a>
+                            <a href="{{ route('news', ['category' => $news->category->slug]) }}" class="breadcrumbs__url">{{ $news->category->name }}</a>
+                        </li>
+                        @endif
+                        <li class="breadcrumbs__item">
+                            <span class="text-muted">{{ Str::limit($news->title, 45) }}</span>
                         </li>
                     </ul>
                     <!-- end breadcrumb -->
@@ -33,40 +149,41 @@
                     <!-- Article Detail -->
                     <div class="wrap__article-detail">
                         <div class="wrap__article-detail-title">
-                            <h1>
+                            <h1 style="line-height: 1.35; font-weight: 700; color: #0f172a;">
                                 {!! $news->title !!}
                             </h1>
                         </div>
                         <hr>
-                        <div class="wrap__article-detail-info">
-                            <ul class="list-inline d-flex flex-wrap justify-content-start">
+                        <div class="wrap__article-detail-info mb-3">
+                            <ul class="list-inline d-flex flex-wrap justify-content-start align-items-center mb-0" style="gap: 15px;">
                                 <li class="list-inline-item">
-                                    {{ __('frontend.By') }}
-                                    <a href="#">
-                                        {{ $news->author->name }},
-                                    </a>
+                                    <i class="fa fa-user text-muted mr-1"></i> {{ __('frontend.By') }}
+                                    <strong>{{ $news->author?->name ?? 'Editorial Desk' }}</strong>
                                 </li>
                                 <li class="list-inline-item">
-                                    <span class="text-dark text-capitalize ml-1">
-                                        {{ date('M d, Y', strtotime($news->created_at)) }}
-                                    </span>
-                                </li>
-                                <li class="list-inline-item">
+                                    <i class="fa fa-calendar-alt text-muted mr-1"></i>
                                     <span class="text-dark text-capitalize">
-                                        {{ __('frontend.in') }}
+                                        {{ localizeDate($news->created_at, 'M d, Y') }}
                                     </span>
-                                    <a href="#">
+                                </li>
+                                <li class="list-inline-item">
+                                    <i class="fa fa-folder text-muted mr-1"></i>
+                                    <a href="{{ route('news', ['category' => $news->category->slug]) }}" class="badge badge-primary text-white py-1 px-2 font-weight-bold">
                                         {{ $news->category->name }}
                                     </a>
-
-
+                                </li>
+                                <li class="list-inline-item text-muted">
+                                    <i class="fa fa-clock mr-1"></i> {{ $readTime }} min read
+                                </li>
+                                <li class="list-inline-item text-muted">
+                                    <i class="fa fa-eye mr-1"></i> {{ number_format($news->views) }} views
                                 </li>
                             </ul>
                         </div>
 
                         <div class="wrap__article-detail-image mt-4">
                             <figure>
-                                <img src="{{ asset($news->image) }}" alt="" class="img-fluid">
+                                <img src="{{ asset($news->image) }}" alt="{{ $news->title }}" class="img-fluid rounded" style="width: 100%; object-fit: cover;">
                             </figure>
                         </div>
                         <div class="wrap__article-detail-content">
@@ -79,7 +196,7 @@
                                 </div>
 
                                 <ul class="list-inline">
-                                    <span class="share">share on:</span>
+                                    <span class="share">{{ __('frontend.share on:') }}</span>
                                     <li class="list-inline-item">
                                         <a class="btn btn-social-o facebook"
                                             href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}">
@@ -120,9 +237,9 @@
 
                                 </ul>
                             </div>
-                            <p class="has-drop-cap-fluid">
+                            <div class="article-body-content">
                                 {!! $news->content !!}
-                            </p>
+                            </div>
                         </div>
 
 
@@ -139,7 +256,7 @@
                             </li>
                             @foreach ($news->tags as $tag)
                                 <li class="list-inline-item">
-                                    <a href="#">
+                                    <a href="{{ route('news', ['tag' => $tag->name]) }}">
                                         #{{ $tag->name }}
                                     </a>
                                 </li>
@@ -159,7 +276,7 @@
                             </figure>
                             <div class="wrap__profile-author-detail">
                                 <div class="wrap__profile-author-detail-name">{{ __('frontend.author') }}</div>
-                                <h4>{{ $news->author->name }}</h4>
+                                <h4>{{ $news->author?->name ?? 'Editorial Desk' }}</h4>
                                 <p>{{ $news->title }}</p>
                                 <ul class="list-inline">
                                     <li class="list-inline-item">
@@ -196,7 +313,7 @@
                     <!-- Comment  -->
                     @auth
                         <div id="comments" class="comments-area">
-                            <h3 class="comments-title">{{ $news->comments()->count() }} {{ __('frontend.Comments') }}:</h3>
+                            <h3 class="comments-title">{{ localizeNumber($news->comments()->count()) }} {{ __('frontend.Comments') }}:</h3>
 
                             <ol class="comment-list">
                                 @foreach ($news->comments()->whereNull('parent_id')->get() as $comment)
@@ -212,7 +329,7 @@
 
                                                 <div class="comment-metadata">
                                                     <a href="#">
-                                                        <span>{{ date('M, d, Y H:i', strtotime($comment->created_at)) }}</span>
+                                                        <span>{{ localizeDate($comment->created_at, 'M, d, Y H:i') }}</span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -245,7 +362,7 @@
 
                                                                 <div class="comment-metadata">
                                                                     <a href="#">
-                                                                        <span>{{ date('M, d, Y H:i', strtotime($reply->created_at)) }}</span>
+                                                                        <span>{{ localizeDate($reply->created_at, 'M, d, Y H:i') }}</span>
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -289,7 +406,7 @@
                                                     <div class="modal-body">
                                                         <form action="{{ route('news-comment-reply') }}" method="POST">
                                                             @csrf
-                                                            <textarea name="reply" cols="30" rows="7" placeholder="Type. . ."></textarea>
+                                                            <textarea name="reply" cols="30" rows="7" placeholder="{{ __('frontend.Type here') }}..."></textarea>
                                                             <input type="hidden" name="news_id"
                                                                 value="{{ $news->id }}">
                                                             <input type="hidden" name="parent_id"
@@ -326,7 +443,7 @@
                                     </p>
                                     <p class="form-submit mb-0">
                                         <input type="submit" name="submit" id="submit" class="submit"
-                                            value="Post Comment">
+                                            value="{{ __('frontend.Post Comment') }}">
                                     </p>
                                 </form>
                             </div>
@@ -382,7 +499,7 @@
 
                         @if (count($relatedPosts) > 0)
                             <h4>
-                                you may also like
+                                {{ __('frontend.you may also like') }}
                             </h4>
 
                             <div class="article__entry-carousel-three">
@@ -400,12 +517,12 @@
                                                 <ul class="list-inline">
                                                     <li class="list-inline-item">
                                                         <span class="text-primary">
-                                                            {{ __('frontend.by') }} {{ $post->author->name }}
+                                                            {{ __('frontend.by') }} {{ $post->author?->name ?? 'Editorial Desk' }}
                                                         </span>
                                                     </li>
                                                     <li class="list-inline-item">
                                                         <span>
-                                                            <span>{{ date('M, d, Y H:i', strtotime($post->created_at)) }}</span>
+                                                            <span>{{ localizeDate($post->created_at, 'M, d, Y H:i') }}</span>
                                                         </span>
                                                     </li>
 
@@ -435,7 +552,7 @@
                                     <div class="row no-gutters">
                                         <div class="col">
                                             <input class="form-control border-secondary border-right-0 rounded-0"
-                                                value="" placeholder="Search">
+                                                value="" placeholder="{{ __('frontend.search') }}">
                                         </div>
                                         <div class="col-auto">
                                             <button
@@ -467,12 +584,12 @@
                                                             <ul class="list-inline">
                                                                 <li class="list-inline-item">
                                                                     <span class="text-primary">
-                                                                        {{ __('frontend.by') }} {{ $news->author->name }}
+                                                                        {{ __('frontend.by') }} {{ $news->author?->name ?? 'Editorial Desk' }}
                                                                     </span>
                                                                 </li>
                                                                 <li class="list-inline-item">
                                                                     <span class="text-dark text-capitalize">
-                                                                        {{ date('M d, Y', strtotime($news->created_at)) }}
+                                                                        {{ localizeDate($news->created_at, 'M d, Y') }}
                                                                     </span>
                                                                 </li>
 
@@ -506,12 +623,12 @@
                                                 <ul class="list-inline">
                                                     <li class="list-inline-item">
                                                         <span class="text-primary">
-                                                            {{ __('frontend.by') }} {{ $news->author->name }}
+                                                            {{ __('frontend.by') }} {{ $news->author?->name ?? 'Editorial Desk' }}
                                                         </span>
                                                     </li>
                                                     <li class="list-inline-item">
                                                         <span class="text-dark text-capitalize">
-                                                            {{ date('M d, Y', strtotime($news->created_at)) }}
+                                                            {{ localizeDate($news->created_at, 'M d, Y') }}
                                                         </span>
                                                     </li>
 
@@ -539,7 +656,7 @@
                             <!-- widget Social media -->
                             <div class="wrap__social__media">
                                 @foreach ($socialCounts as $socialCount)
-                                    <a href="{{ $socialCount->url }}" target="_blank">
+                                    <a href="{{ normalizeStoredUrl($socialCount->url) }}" target="_blank">
                                         <div class="social__media__widget mt-2"
                                             style="background-color:{{ $socialCount->color }}">
                                             <span class="social__media__widget-icon">
@@ -560,13 +677,13 @@
                         <!-- End social media -->
 
                         <aside class="wrapper__list__article">
-                            <h4 class="border_section">tags</h4>
+                            <h4 class="border_section">{{ __('frontend.tags') }}</h4>
                             <div class="blog-tags p-0">
                                 <ul class="list-inline">
                                     @foreach ($mostCommonTags as $tag)
                                         <li class="list-inline-item">
-                                            <a href="#">
-                                                #{{ $tag->name }}-{{ $tag->count }}
+                                            <a href="{{ route('news', ['tag' => $tag->name]) }}">
+                                                #{{ $tag->name }} ({{ localizeNumber($tag->count) }})
                                             </a>
                                         </li>
                                     @endforeach
@@ -585,7 +702,7 @@
                                 <form action="" class="newsletter-form">
                                     <div class="input-group ">
                                         <input type="text" class="form-control" name="email"
-                                            placeholder="Your email address">
+                                            placeholder="{{ __('frontend.Your email address') }}">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary newsletter-button"
                                                 type="submit">{{ __('frontend.sign up') }}</button>
@@ -595,10 +712,10 @@
                             </div>
                         </aside>
 
-                        @if ($ad->side_bar_ad_status == 1)
+                        @if ($ad?->side_bar_ad_status == 1)
                             <aside class="wrapper__list__article">
                                 <h4 class="border_section">{{ __('frontend.Advertise') }}</h4>
-                                <a href="{{ $ad->side_bar_ad_url }}">
+                                <a href="{{ normalizeStoredUrl($ad->side_bar_ad_url) }}">
                                     <figure>
                                         <img src="{{ asset($ad->side_bar_ad) }}" alt="" class="img-fluid">
                                     </figure>
@@ -632,7 +749,7 @@
 
                         $.ajax({
                             method: 'DELETE',
-                            url: "{{ route('news-comment-destory') }}",
+                            url: "{{ route('news-comment-destroy') }}",
                             data:{id:id},
                             success: function(data) {
                                 if (data.status === 'success') {

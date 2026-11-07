@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>{{ __('admin.General Dashboard') }} &mdash; Stisla</title>
+    <title>{{ $settings['site_name'] ?? 'Admin' }} &mdash; {{ __('admin.General Dashboard') }}</title>
+    @if (!empty($settings['site_favicon']) && file_exists(public_path($settings['site_favicon'])))
+        <link rel="icon" href="{{ asset($settings['site_favicon']) }}?v={{ filemtime(public_path($settings['site_favicon'])) }}">
+    @endif
 
     <!-- General CSS Files -->
     <link rel="stylesheet" href="{{ asset('admin/assets/modules/bootstrap/css/bootstrap.min.css') }}">
@@ -151,7 +154,7 @@
                 Swal.fire({
                     title: '{{ __('admin.Are you sure') }}?',
                     text: "{{ __('admin.You will not be able to revert this') }}!",
-                    icon: '{{ __('admin.warning') }}',
+                    icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',

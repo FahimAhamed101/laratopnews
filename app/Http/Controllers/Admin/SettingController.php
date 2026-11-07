@@ -26,8 +26,11 @@ class SettingController extends Controller
 
     function updateGeneralSetting(AdminGeneralSettingUpdateRequest $request) : RedirectResponse {
 
-        $logoPath = $this->handleFileUpload($request, 'site_logo');
-        $faviconPath = $this->handleFileUpload($request, 'site_favicon');
+        $oldLogo = Setting::where('key', 'site_logo')->value('value');
+        $oldFavicon = Setting::where('key', 'site_favicon')->value('value');
+
+        $logoPath = $this->handleFileUpload($request, 'site_logo', $oldLogo);
+        $faviconPath = $this->handleFileUpload($request, 'site_favicon', $oldFavicon);
 
         Setting::updateOrCreate(
             ['key' => 'site_name'],
@@ -39,6 +42,11 @@ class SettingController extends Controller
                 ['key' => 'site_logo'],
                 ['value' => $logoPath]
             );
+
+            // Sync footer logo everywhere so changing here updates all views
+            if (\Illuminate\Support\Facades\Schema::hasTable('footer_infos')) {
+                \App\Models\FooterInfo::query()->update(['logo' => $logoPath]);
+            }
         }
 
         if(!empty($faviconPath)){

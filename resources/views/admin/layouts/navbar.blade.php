@@ -11,14 +11,14 @@
                 class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <img alt="image" src="{{ asset('admin/assets/img/avatar/avatar-1.png') }}"
                     class="rounded-circle mr-1">
-                <div class="d-sm-none d-lg-inline-block">{{ __('admin.Hi') }}, {{ Auth::guard('admin')->user()->name }}
+                <div class="d-sm-none d-lg-inline-block">{{ __('admin.Hi') }}, {{ Auth::guard('admin')->user()?->name ?? 'Admin' }}
                 </div>
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <a href="{{ route('admin.profile.index') }}" class="dropdown-item has-icon">
                     <i class="far fa-user"></i> {{ __('admin.Profile') }}
                 </a>
-                <a href="features-settings.html" class="dropdown-item has-icon">
+                <a href="{{ route('admin.setting.index') }}" class="dropdown-item has-icon">
                     <i class="fas fa-cog"></i> {{ __('admin.Settings') }}
                 </a>
                 <div class="dropdown-divider"></div>

@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /profile/
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://extremis.top/sitemap.xml
+Sitemap: https://extremis.top/sitemap-news.xml

@@ -103,29 +103,45 @@ class HomeController extends Controller
     }
 
     public function showNews(string $slug){
+        // Resolve the article. Prefer the visitor's current language, but fall back to
+        // any language so that a real article never returns a 500 simply because the
+        // visitor was auto-detected into a locale the article was not written in.
         $news = News::with(['author','tags','comments'])->where('slug',$slug)
         ->activeEntries()->withLocalize()
         ->first();
 
+        if (! $news) {
+            $news = News::with(['author','tags','comments'])->where('slug',$slug)
+            ->activeEntries()
+            ->orderBy('id','DESC')
+            ->first();
+        }
+
+        // Never dereference a missing row: serve a clean 404 instead of an error page.
+        abort_if(! $news, 404);
+
+        // Keep related and adjacent queries scoped to the article's own language.
+        $articleLanguage = $news->language ?: getLanguage();
+
         $recentNews = News::with(['category','author'])->where('slug','!=',$news->slug)
-         ->activeEntries()->withLocalize()->orderBy('id','DESC')->take(4)->get();
+         ->activeEntries()->where('language',$articleLanguage)->orderBy('id','DESC')->take(4)->get();
 
         $nextPost = News::where('id','>',$news->id)
-         ->activeEntries()->withLocalize()
+         ->activeEntries()->where('language',$articleLanguage)
          ->orderBy('id','asc')->first();
 
         $previousPost = News::where('id','<',$news->id)
-         ->activeEntries()->withLocalize()
+         ->activeEntries()->where('language',$articleLanguage)
          ->orderBy('id','desc')->first();
 
 
         $relatedPosts = News::where('slug','!=',$news->slug)
         ->where('category_id',$news->category_id)
-        ->activeEntries()->withLocalize()
+        ->activeEntries()->where('language',$articleLanguage)
         ->take(5)
         ->get();
 
-        $socialCounts = SocialCount::where(['status'=>1,'language'=>getLanguage()])->get();
+        $socialCounts = SocialCount::where(['status'=>1,'language'=>$articleLanguage])->get();
 
         $this->countView($news);
 
@@ -247,7 +263,7 @@ class HomeController extends Controller
         return redirect()->back();
     }
 
-    public function commentDestory(Request $request){
+    public function commentDestroy(Request $request){
         $comment = Comment::findOrFail($request->id);
         if(Auth::user()->id===$comment->user_id){
             $comment->delete();
@@ -257,7 +273,12 @@ class HomeController extends Controller
         return response(['status'=>'error','message'=>__('frontend.Something went wrong')]);
     }
 
-    public function SubscribeNewsLetter(Request $request)
+    public function commentDestory(Request $request)
+    {
+        return $this->commentDestroy($request);
+    }
+
+    public function subscribeNewsLetter(Request $request)
     {
        $request->validate([
         'email' => ['required', 'email', 'max:255', 'unique:subscribers,email']

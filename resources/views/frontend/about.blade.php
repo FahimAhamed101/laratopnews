@@ -13,7 +13,7 @@
                                 <i class="fa fa-home"></i> {{ __('frontend.Home') }}</a>
                         </li>
                         <li class="breadcrumbs__item">
-                            <a href="javascript:;" class="breadcrumbs__url">{{ __('frontend.About') }}</a>
+                            <span class="breadcrumbs__url">{{ __('frontend.About') }}</span>
                         </li>
 
                     </ul>

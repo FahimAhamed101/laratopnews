@@ -20,12 +20,12 @@
                                             <ul class="list-inline">
                                                 <li class="list-inline-item">
                                                     <span class="text-primary">
-                                                        {{ __('frontend.by') }} {{ $news->author->name }}
+                                                        {{ __('frontend.by') }} {{ $news->author?->name ?? 'Editorial Desk' }}
                                                     </span>
                                                 </li>
                                                 <li class="list-inline-item">
                                                     <span class="text-dark text-capitalize">
-                                                        {{ date('M d, Y', strtotime($news->created_at)) }}
+                                                        {{ localizeDate($news->created_at, 'M d, Y') }}
                                                     </span>
                                                 </li>
 

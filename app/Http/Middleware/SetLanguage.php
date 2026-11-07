@@ -16,7 +16,15 @@ class SetLanguage
      */
     public function handle(Request $request, Closure $next): Response
     {
-        App::setLocale(getLanguage());
-        return $next($request);
+        $lang = getLanguage();
+        App::setLocale($lang);
+
+        $response = $next($request);
+
+        if (! $request->hasCookie('site_language') && method_exists($response, 'withCookie')) {
+            $response->withCookie(cookie('site_language', $lang, 525600, '/', null, null, false));
+        }
+
+        return $response;
     }
 }

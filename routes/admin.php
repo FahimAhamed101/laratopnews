@@ -22,24 +22,25 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SocialCountController;
 use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Admin\SubscriberController;
+use App\Http\Controllers\Admin\AiNewsGeneratorController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix'=>'admin' ,'as'=>'admin.'],function(){
-    Route::get('login',[AdminAuthenticationController::class,'login'])->name('login');
-    Route::post('login',[AdminAuthenticationController::class,'handleLogin'])->name('handle-login');
-    Route::post('logout',[AdminAuthenticationController::class,'logout'])->name('logout');
-    Route::get('forgot-password',[AdminAuthenticationController::class,'forgotPassword'])->name('forgot-password');
-    Route::post('forgot-password',[AdminAuthenticationController::class,'sendResetLink'])->name('forgot-password.send');
-    Route::get('reset-password/{token}',[AdminAuthenticationController::class,'resetPassword'])->name('reset-password');
-    Route::post('reset-password',[AdminAuthenticationController::class,'handleResetPassword'])->name('reset-password.send');
+Route::middleware('guest:admin')->prefix('admin')->as('admin.')->group(function () {
+    Route::get('login', [AdminAuthenticationController::class, 'login'])->name('login');
+    Route::post('login', [AdminAuthenticationController::class, 'handleLogin'])->name('handle-login');
+    Route::get('forgot-password', [AdminAuthenticationController::class, 'forgotPassword'])->name('forgot-password');
+    Route::post('forgot-password', [AdminAuthenticationController::class, 'sendResetLink'])->name('forgot-password.send');
+    Route::get('reset-password/{token}', [AdminAuthenticationController::class, 'resetPassword'])->name('reset-password');
+    Route::post('reset-password', [AdminAuthenticationController::class, 'handleResetPassword'])->name('reset-password.send');
 });
 
-Route::group(['prefix'=>'admin','as'=>'admin.','middleware'=>['admin']],function(){
-    Route::get('dashboard',[DashboardController::class,'index'])->name('dashboard');
-    Route::put('profile-password-update/{id}',[ProfileController::class,'passwordUpdate'])->name('profile-password.update');
+Route::prefix('admin')->as('admin.')->middleware(['admin'])->group(function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('logout', [AdminAuthenticationController::class, 'logout'])->name('logout');
+    Route::put('profile-password-update/{id}', [ProfileController::class, 'passwordUpdate'])->name('profile-password.update');
 
     // Category routes
-    Route::resource('category',CategoryController::class);
+    Route::resource('category', CategoryController::class)->except(['show']);
 
     //Home Section Setting Routes
     Route::get('home-section-setting', [HomeSectionSettingController::class, 'index'])->name('home-section-setting.index');
@@ -48,56 +49,70 @@ Route::group(['prefix'=>'admin','as'=>'admin.','middleware'=>['admin']],function
 
     // News routes
     Route::get('fetch-news-category', [NewsController::class, 'fetchCategory'])->name('fetch-news-category');
-    Route::get('news-copy/{id}', [NewsController::class, 'copyNews'])->name('news-copy');
-    Route::get('pending-news', [NewsController::class, 'pendingNews'])->name('pending-news');
-    Route::put('approve_news', [NewsController::class, 'approveNews'])->name('approve-news');
+    Route::post('news-copy/{id}', [NewsController::class, 'copyNews'])->name('news.copy');
+    Route::get('pending-news', [NewsController::class, 'pendingNews'])->name('pending.news.index');
+    Route::put('approve-news', [NewsController::class, 'approveNews'])->name('approve-news');
     Route::get('toggle-news-status', [NewsController::class, 'toggleNewsStatus'])->name('toggle-news-status');
-    Route::resource('news',NewsController::class);
+    Route::resource('news', NewsController::class)->except(['show']);
 
-    // Profile routes
-    Route::resource('profile',ProfileController::class);
+    // AI News Auto-Poster Routes
+    Route::get('ai-news-generator', [AiNewsGeneratorController::class, 'index'])->name('ai-news.index');
+    Route::post('ai-news-generator/generate', [AiNewsGeneratorController::class, 'generate'])->name('ai-news.generate');
+    Route::post('ai-news-generator/update', [AiNewsGeneratorController::class, 'updateArticles'])->name('ai-news.update');
+    Route::post('ai-news-generator/delete', [AiNewsGeneratorController::class, 'deleteArticles'])->name('ai-news.delete');
+    Route::get('ai-news-generator/test-connection', [AiNewsGeneratorController::class, 'testConnection'])->name('ai-news.test-connection');
+    Route::get('ai-news-generator/search-google', [AiNewsGeneratorController::class, 'searchGoogleNews'])->name('ai-news.search-google');
 
-    // Languages routes
-    Route::resource('language',LanguageController::class);
+   
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::match(['put', 'patch'], 'profile/{profile}', [ProfileController::class, 'update'])->name('profile.update');
 
-    //Social Count Routes
-    Route::resource('social-count', SocialCountController::class);
+    
+    Route::resource('language', LanguageController::class)->except(['show']);
 
-    /** Ad Route */
-    Route::resource('ad', AdController::class);
+    
+    Route::resource('social-count', SocialCountController::class)->except(['show']);
 
-    // Subscriber Route
-    Route::resource('subscribers', SubscriberController::class);
+    
+    Route::get('ad', [AdController::class, 'index'])->name('ad.index');
+    Route::match(['put', 'patch'], 'ad/{ad}', [AdController::class, 'update'])->name('ad.update');
 
-    //Social links Route
-    Route::resource('social-link', SocialLinkController::class);
+    
+    Route::get('subscribers', [SubscriberController::class, 'index'])->name('subscribers.index');
+    Route::post('subscribers', [SubscriberController::class, 'store'])->name('subscribers.store');
+    Route::delete('subscribers/{subscriber}', [SubscriberController::class, 'destroy'])->name('subscribers.destroy');
 
-    // Footer Info Route
-    Route::resource('footer-info', FooterInfoController::class);
+    
+    Route::resource('social-link', SocialLinkController::class)->except(['show']);
 
-    // Footer Grid One Route
+   
+    Route::get('footer-info', [FooterInfoController::class, 'index'])->name('footer-info.index');
+    Route::post('footer-info', [FooterInfoController::class, 'store'])->name('footer-info.store');
+
+    
     Route::post('footer-grid-one-title', [FooterGridOneController::class, 'handleTitle'])->name('footer-grid-one-title');
-    Route::resource('footer-grid-one', FooterGridOneController::class);
+    Route::resource('footer-grid-one', FooterGridOneController::class)->except(['show']);
 
-    //Footer Grid Two Route
+   
     Route::post('footer-grid-two-title', [FooterGridTwoController::class, 'handleTitle'])->name('footer-grid-two-title');
-    Route::resource('footer-grid-two', FooterGridTwoController::class);
+    Route::resource('footer-grid-two', FooterGridTwoController::class)->except(['show']);
 
     //Footer Grid Two Route
     Route::post('footer-grid-three-title', [FooterGridThreeController::class, 'handleTitle'])->name('footer-grid-three-title');
-    Route::resource('footer-grid-three', FooterGridThreeController::class);
+    Route::resource('footer-grid-three', FooterGridThreeController::class)->except(['show']);
 
     // About page Route
     Route::get('about', [AboutController::class, 'index'])->name('about.index');
     Route::put('about', [AboutController::class, 'update'])->name('about.update');
 
-     // Contact page Route
-     Route::get('contact', [ContactController::class, 'index'])->name('contact.index');
-     Route::put('contact', [ContactController::class, 'update'])->name('contact.update');
+    // Contact page Route
+    Route::get('contact', [ContactController::class, 'index'])->name('contact.index');
+    Route::put('contact', [ContactController::class, 'update'])->name('contact.update');
 
-     // Contact Message Route
-     Route::get('contact-message', [ContactMessageController::class, 'index'])->name('contact-message.index');
-     Route::post('contact-send-replay', [ContactMessageController::class, 'sendReplay'])->name('contact.send-replay');
+    // Contact Message Route
+    Route::get('contact-message', [ContactMessageController::class, 'index'])->name('contact-message.index');
+    Route::post('contact-send-reply', [ContactMessageController::class, 'sendReplay'])->name('contact.send-reply');
+    Route::delete('contact-message/{message}', [ContactMessageController::class, 'destroy'])->name('contact-message.destroy');
 
     // Settings Routes
     Route::get('setting', [SettingController::class, 'index'])->name('setting.index');
@@ -119,7 +134,7 @@ Route::group(['prefix'=>'admin','as'=>'admin.','middleware'=>['admin']],function
 
 
     //Admin User Routes
-    Route::resource('role-users', RoleUserController::class);
+    Route::resource('role-users', RoleUserController::class)->except(['show']);
 
     //Localization Routes
     Route::get('admin-localization', [LocalizationController::class, 'adminIndex'])->name('admin-localization.index');

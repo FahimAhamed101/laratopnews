@@ -10,8 +10,8 @@
     <!-- End Hero news -->
 
     <!-- End Hero news Section-->
-    @if ($ad->home_top_bar_ad_status == 1)
-    <a href="{{ $ad->home_top_bar_ad_url }}">
+    @if ($ad?->home_top_bar_ad_status == 1)
+    <a href="{{ normalizeStoredUrl($ad->home_top_bar_ad_url) }}">
         <div class="large_add_banner">
             <div class="container">
                 <div class="row">

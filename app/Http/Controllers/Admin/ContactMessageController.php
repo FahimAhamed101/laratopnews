@@ -54,4 +54,11 @@ class ContactMessageController extends Controller
             return redirect()->back();
         }
     }
+
+    public function destroy(string $id)
+    {
+        ReceivedMail::findOrFail($id)->delete();
+
+        return response(['status' => 'success', 'message' => __('admin.Deleted Successfully!')]);
+    }
 }

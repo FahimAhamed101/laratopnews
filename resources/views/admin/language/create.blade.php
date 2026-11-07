@@ -18,7 +18,7 @@
                     <label for="">{{ __('admin.Language') }}</label>
                     <select name="lang" id="language-select" class="form-control select2">
                         <option value="">--Select--</option>
-                        @foreach (config('language') as $key => $lang)
+                        @foreach ((config('language') ?? []) as $key => $lang)
                             <option value="{{ $key }}">{{ $lang['name'] }}</option>
                         @endforeach
                     </select>
