@@ -14,6 +14,7 @@
 @section('article_modified_time', ($news->updated_at ?? $news->created_at ?? now())->toIso8601String())
 @section('article_section', $news->category->name ?? 'News')
 @section('article_author', $news->author?->name ?? 'Editorial Desk')
+@section('meta_keywords', $news->tags->pluck('name')->implode(', ') ?: ($settings['site_seo_keywords'] ?? 'news, breaking news'))
 <!-- End Setting metas -->
 
 @php

@@ -50,7 +50,7 @@
 
     <title>@hasSection('title') @yield('title') @else {{ $settings['site_seo_title'] ?? 'Extremis News - Verified News & Analysis' }} @endif</title>
     <meta name="description" content="@hasSection('meta_description') @yield('meta_description') @else {{ $settings['site_seo_description'] ?? 'Extremis News delivers breaking global news, investigative reports, and in-depth analysis.' }} @endif" />
-    <meta name="keywords" content="{{ $settings['site_seo_keywords'] ?? 'news, breaking news, technology, world affairs, economy' }}" />
+    <meta name="keywords" content="@yield('meta_keywords', $settings['site_seo_keywords'] ?? 'news, breaking news, technology, world affairs, economy')" />
     <meta name="robots" content="@yield('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')" />
     <link rel="canonical" href="@yield('canonical_url', url()->current())" />
 

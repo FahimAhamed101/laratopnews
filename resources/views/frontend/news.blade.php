@@ -6,7 +6,29 @@
     // own guidance for site search pages) while still letting crawlers follow
     // the article links out of them.
     $isFilteredListing = request()->filled('search') || request()->filled('tag');
+
+    $siteName = $settings['site_name'] ?? 'Extremis News';
+    $pageTitle = __('frontend.News') . ' | ' . $siteName;
+    $pageDesc = $settings['site_seo_description'] ?? 'Stay up to date with the latest breaking headlines and verified news.';
+
+    if (request()->filled('category') && isset($categories)) {
+        $selectedCat = $categories->firstWhere('slug', request()->category);
+        if ($selectedCat) {
+            $pageTitle = $selectedCat->name . ' - ' . __('frontend.News') . ' | ' . $siteName;
+            $pageDesc = 'Explore the latest ' . $selectedCat->name . ' news, headlines, and analysis on ' . $siteName . '.';
+        }
+    } elseif (request()->filled('tag')) {
+        $pageTitle = '#' . request()->tag . ' ' . __('frontend.News') . ' | ' . $siteName;
+        $pageDesc = 'Explore recent articles and stories tagged #' . request()->tag . ' on ' . $siteName . '.';
+    } elseif (request()->filled('search')) {
+        $pageTitle = 'Search: ' . request()->search . ' | ' . $siteName;
+        $pageDesc = 'Search results for "' . request()->search . '" on ' . $siteName . '.';
+    }
 @endphp
+
+@section('title', $pageTitle)
+@section('meta_description', $pageDesc)
+@section('canonical_url', url()->current())
 
 @if ($isFilteredListing)
     @section('robots', 'noindex, follow')

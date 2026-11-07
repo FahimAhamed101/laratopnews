@@ -87,8 +87,15 @@ class NewsController extends Controller
         $news->title = $request->title;
         $news->slug = \Str::slug($request->title);
         $news->content = $request->content;
-        $news->meta_title = $request->meta_title;
-        $news->meta_description = $request->meta_description;
+
+        // Smart SEO Meta generation with automatic fallback
+        $cleanContent = trim(preg_replace('/\s+/', ' ', strip_tags($request->content)));
+        $news->meta_title = !empty(trim($request->meta_title ?? ''))
+            ? trim($request->meta_title)
+            : mb_substr(strip_tags($request->title), 0, 70);
+        $news->meta_description = !empty(trim($request->meta_description ?? ''))
+            ? trim($request->meta_description)
+            : mb_substr($cleanContent, 0, 160);
         $news->is_breaking_news = $request->is_breaking_news == 1 ? 1 : 0;
         $news->show_at_slider = $request->show_at_slider == 1 ? 1 : 0;
         $news->show_at_popular = $request->show_at_popular == 1 ? 1 : 0;
@@ -177,8 +184,15 @@ class NewsController extends Controller
          $news->title = $request->title;
          $news->slug = \Str::slug($request->title);
          $news->content = $request->content;
-         $news->meta_title = $request->meta_title;
-         $news->meta_description = $request->meta_description;
+
+         // Smart SEO Meta generation with automatic fallback
+         $cleanContent = trim(preg_replace('/\s+/', ' ', strip_tags($request->content)));
+         $news->meta_title = !empty(trim($request->meta_title ?? ''))
+             ? trim($request->meta_title)
+             : mb_substr(strip_tags($request->title), 0, 70);
+         $news->meta_description = !empty(trim($request->meta_description ?? ''))
+             ? trim($request->meta_description)
+             : mb_substr($cleanContent, 0, 160);
          $news->is_breaking_news = $request->is_breaking_news == 1 ? 1 : 0;
          $news->show_at_slider = $request->show_at_slider == 1 ? 1 : 0;
          $news->show_at_popular = $request->show_at_popular == 1 ? 1 : 0;

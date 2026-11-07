@@ -776,7 +776,7 @@ HTML;
         foreach ([
             'en' => [
                 'description' => 'Extremis News publishes verified updates for readers who need clear, useful reporting without noise.',
-                'copyright' => 'Copyright '.date('Y').' Extremis News. All rights reserved.',
+                'copyright' => 'Copyright © '.date('Y').' Fahim. All rights reserved.',
                 'titles' => [
                     'grid_one_title' => 'Company',
                     'grid_two_title' => 'News Sections',
@@ -803,7 +803,7 @@ HTML;
             ],
             'bn' => [
                 'description' => 'এক্সট্রিমিস নিউজ পাঠকের জন্য যাচাই করা, পরিষ্কার ও প্রয়োজনীয় সংবাদ প্রকাশ করে।',
-                'copyright' => 'কপিরাইট '.date('Y').' এক্সট্রিমিস নিউজ। সর্বস্বত্ব সংরক্ষিত।',
+                'copyright' => 'কপিরাইট © '.date('Y').' ফাহিম। সর্বস্বত্ব সংরক্ষিত।',
                 'titles' => [
                     'grid_one_title' => 'প্রতিষ্ঠান',
                     'grid_two_title' => 'সংবাদ বিভাগ',
