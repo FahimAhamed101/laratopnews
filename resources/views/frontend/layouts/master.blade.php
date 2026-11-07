@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="google-site-verification" content="7D5GsLCJIj5u-4aD5whqMuZuQK5y5czs2M-JKQ6Qybk" />
 

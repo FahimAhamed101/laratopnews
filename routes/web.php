@@ -14,6 +14,7 @@ Route::get('language', LanguageController::class)->name('language');
 
 // SEO XML Sitemaps & Feeds
 Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('sitemap', [SitemapController::class, 'index']);
 Route::get('sitemap-news.xml', [SitemapController::class, 'newsSitemap'])->name('sitemap.news');
 Route::get('feed', [FeedController::class, 'index'])->name('feed');
 Route::get('rss.xml', [FeedController::class, 'index'])->name('feed.rss');

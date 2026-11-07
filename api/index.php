@@ -1,5 +1,11 @@
 <?php
 
+// Forward HTTPS headers from reverse proxy (Vercel)
+if ((isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'vercel.app') !== false)) {
+    $_SERVER['HTTPS'] = 'on';
+    $_SERVER['SERVER_PORT'] = '443';
+}
+
 // Ensure writable directories in /tmp for serverless environment
 $tmpDirs = [
     '/tmp/views',
