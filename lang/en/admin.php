@@ -96,4 +96,14 @@ return [
     'Yes, delete it!' => 'Yes, delete it!',
     'Deleted!' => 'Deleted!',
     'Error!' => 'Error!',
+
+    // Authentication & Login
+    'Login' => 'Login',
+    'Password' => 'Password',
+    'Forgot Password?' => 'Forgot Password?',
+    'Remember Me' => 'Remember Me',
+    'Please fill in your email' => 'Please fill in your email',
+    'please fill in your password' => 'Please fill in your password',
+    'Please login first!' => 'Please login first!',
+    'A mail has been sent to your email address please check!' => 'A reset link has been sent to your email address. Please check your inbox!',
 ];

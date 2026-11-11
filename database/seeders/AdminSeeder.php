@@ -37,6 +37,23 @@ class AdminSeeder extends Seeder
             'languages index',
         ]);
 
+        $fahim = Admin::create([
+            'name' => 'Fahim Ahamed',
+            'email' => 'fahimahamedweb@gmail.com',
+            'image' => $images['admin'],
+            'password' => Hash::make('12345678'),
+            'status' => 1,
+            'designation' => 'Editor-in-Chief & Founder',
+            'bio' => 'Founder and Editor-in-Chief at Extremis News, leading investigative coverage, digital news operations, and editorial direction.',
+            'website' => 'https://fahimweb.com',
+            'twitter' => 'https://twitter.com/fahimahamed',
+            'linkedin' => 'https://linkedin.com/in/fahimahamedweb',
+            'facebook' => 'https://facebook.com/fahim',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+        $fahim->assignRole($superAdminRole);
+
         $admin = Admin::create([
             'name' => 'Nadia Rahman',
             'email' => 'admin@admin.com',

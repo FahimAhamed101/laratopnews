@@ -96,4 +96,14 @@ return [
     'Yes, delete it!' => 'হ্যাঁ, এটি মুছুন!',
     'Deleted!' => 'মুছে ফেলা হয়েছে!',
     'Error!' => 'ত্রুটি!',
+
+    // Authentication & Login
+    'Login' => 'লগইন',
+    'Password' => 'পাসওয়ার্ড',
+    'Forgot Password?' => 'পাসওয়ার্ড ভুলে গেছেন?',
+    'Remember Me' => 'আমাকে মনে রাখুন',
+    'Please fill in your email' => 'আপনার ইমেইল ঠিকানা দিন',
+    'please fill in your password' => 'আপনার পাসওয়ার্ড দিন',
+    'Please login first!' => 'অনুগ্রহ করে প্রথমে লগইন করুন!',
+    'A mail has been sent to your email address please check!' => 'আপনার ইমেইলে একটি রিসেট লিংক পাঠানো হয়েছে!',
 ];
