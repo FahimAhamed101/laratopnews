@@ -9,21 +9,22 @@
                     <div class="card mx-auto" style="max-width: 380px;">
                         <div class="card-body">
                             <h4 class="card-title mb-4">{{ __('frontend.Sign in') }}</h4>
-                            <form method="POST" action="{{ route('login') }}">
+                            @if (session()->has('error'))
+                                <div class="alert alert-danger py-2 mb-3" style="font-size: 14px;">
+                                    <i class="fa fa-exclamation-circle mr-1"></i> {{ session()->get('error') }}
+                                </div>
+                            @endif
+                            @if (session()->has('status'))
+                                <div class="alert alert-info py-2 mb-3" style="font-size: 14px;">
+                                    <i class="fa fa-info-circle mr-1"></i> {{ session()->get('status') }}
+                                </div>
+                            @endif
+                            <form method="POST" action="{{ route('login', [], false) }}">
                                 @csrf
-                                {{-- <a href="#" class="btn btn-facebook btn-block mb-2 text-white"> <i
-                                        class="fa fa-facebook"></i> &nbsp; Sign
-                                    in
-                                    with
-                                    Facebook</a>
-                                <a href="#" class="btn btn-primary btn-block mb-4"> <i class="fa fa-google"></i>
-                                    &nbsp;
-                                    Sign in with
-                                    Google</a> --}}
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="{{ __('frontend.Email') }}" type="text" name="email">
+                                    <input class="form-control" placeholder="{{ __('frontend.Email') }}" type="text" name="email" value="{{ old('email') }}" required autofocus>
                                     @error('email')
-                                        <p class="text-danger">{{ $message }}</p>
+                                        <p class="text-danger small mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
                                 <div class="form-group">

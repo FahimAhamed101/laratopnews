@@ -43,4 +43,23 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->report(function (\Throwable $e) {
             error_log("[LARAVEL_FATAL] " . get_class($e) . " => " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
         });
+
+        // Gracefully handle CSRF 419 token expiration without ugly dead-end error pages
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'CSRF token mismatch or session expired. Please refresh the page.',
+                ], 419);
+            }
+
+            if ($request->is('admin/*') || $request->is('admin')) {
+                return redirect()->route('admin.login')
+                    ->withInput($request->except('password', 'password_confirmation', '_token'))
+                    ->with('error', 'Your session expired. Please log in again.');
+            }
+
+            return redirect()->back()
+                ->withInput($request->except('password', 'password_confirmation', '_token'))
+                ->with('error', 'Your session expired. Please try submitting again.');
+        });
     })->create();

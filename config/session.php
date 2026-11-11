@@ -156,7 +156,16 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    'domain' => env('SESSION_DOMAIN', (function () {
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        if (str_contains($host, ':')) {
+            $host = explode(':', $host)[0];
+        }
+        if (str_ends_with($host, 'extremis.top')) {
+            return '.extremis.top';
+        }
+        return null;
+    })()),
 
     /*
     |--------------------------------------------------------------------------
@@ -169,7 +178,15 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', (function () {
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            return true;
+        }
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            return true;
+        }
+        return env('APP_ENV') === 'production';
+    })()),
 
     /*
     |--------------------------------------------------------------------------

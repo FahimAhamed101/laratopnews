@@ -54,15 +54,37 @@
                             </div>
 
                             <div class="card-body">
-                                @if (session()->has('success'))
-                                    <i><b>{{ session()->get('success') }}</b></i>
+                                @if (session()->has('error'))
+                                    <div class="alert alert-danger alert-dismissible show fade py-2 mb-3">
+                                        <div class="alert-body">
+                                            <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                                            <i class="fas fa-exclamation-circle mr-1"></i> {{ session()->get('error') }}
+                                        </div>
+                                    </div>
                                 @endif
-                                <form method="POST" action="{{ route('admin.handle-login') }}" class="needs-validation"
+                                @if (session()->has('status'))
+                                    <div class="alert alert-info alert-dismissible show fade py-2 mb-3">
+                                        <div class="alert-body">
+                                            <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                                            <i class="fas fa-info-circle mr-1"></i> {{ session()->get('status') }}
+                                        </div>
+                                    </div>
+                                @endif
+                                @if (session()->has('success'))
+                                    <div class="alert alert-success alert-dismissible show fade py-2 mb-3">
+                                        <div class="alert-body">
+                                            <button class="close" data-dismiss="alert"><span>&times;</span></button>
+                                            <i class="fas fa-check-circle mr-1"></i> {{ session()->get('success') }}
+                                        </div>
+                                    </div>
+                                @endif
+                                <form method="POST" action="{{ route('admin.handle-login', [], false) }}" class="needs-validation"
                                     novalidate="">
                                     @csrf
                                     <div class="form-group">
                                         <label for="email">Email</label>
                                         <input id="email" type="email" class="form-control" name="email"
+                                            value="{{ old('email') }}"
                                             tabindex="1" required autofocus>
                                         @error('email')
                                             <code>{{ $message }}</code>
@@ -111,7 +133,7 @@
               Don't have an account? <a href="auth-register.html">Create One</a>
             </div> --}}
                         <div class="simple-footer">
-                            Copyright &copy; Hung Phan 2023
+                            Copyright &copy; {{ date('Y') }} Fahim. All rights reserved.
                         </div>
                     </div>
                 </div>
@@ -137,4 +159,4 @@
     <script src="{{ asset('admin/assets/js/custom.js') }}"></script>
 </body>
 
-</html>{{ asset('admin/') }}
+</html>
