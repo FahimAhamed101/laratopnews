@@ -16,7 +16,8 @@
     </script>
     <!-- End Google Tag Manager -->
 
-    <!-- Google Consent Mode v2 (GDPR / EEA / UK / California AdSense Compliance) -->
+    <!-- Google tag (gtag.js) - Google Analytics GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CPT9XKZVJJ"></script>
     <script>
         (function() {
             var consent = null;
@@ -50,9 +51,10 @@
             }
         })();
 
+        gtag('js', new Date());
+        gtag('config', 'G-CPT9XKZVJJ');
         gtag('config', 'G-HM30KCBC8K');
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HM30KCBC8K"></script>
 
     <title>@hasSection('title') @yield('title') @else {{ $settings['site_seo_title'] ?? 'Extremis News - Verified News & Analysis' }} @endif</title>
     <meta name="description" content="@hasSection('meta_description') @yield('meta_description') @else {{ $settings['site_seo_description'] ?? 'Extremis News delivers breaking global news, investigative reports, and in-depth analysis.' }} @endif" />
