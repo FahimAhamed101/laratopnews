@@ -168,15 +168,15 @@
                             <div class="row text-center mt-4 pt-3 border-top">
                                 <div class="col-4 border-right">
                                     <h4 class="font-weight-bold text-dark mb-0">{{ localizeNumber($totalArticles) }}</h4>
-                                    <small class="text-muted text-uppercase tracking-wide" style="font-size: 11px;">Published Articles</small>
+                                    <small class="text-muted text-uppercase tracking-wide" style="font-size: 11px;">{{ __('frontend.Published Articles') }}</small>
                                 </div>
                                 <div class="col-4 border-right">
                                     <h4 class="font-weight-bold text-dark mb-0">{{ convertToKFormat($totalViews) }}</h4>
-                                    <small class="text-muted text-uppercase tracking-wide" style="font-size: 11px;">Total Article Reads</small>
+                                    <small class="text-muted text-uppercase tracking-wide" style="font-size: 11px;">{{ __('frontend.Total Article Reads') }}</small>
                                 </div>
                                 <div class="col-4">
                                     <h4 class="font-weight-bold text-dark mb-0">100%</h4>
-                                    <small class="text-muted text-uppercase tracking-wide" style="font-size: 11px;">Verified Reporter</small>
+                                    <small class="text-muted text-uppercase tracking-wide" style="font-size: 11px;">{{ __('frontend.Verified Reporter') }}</small>
                                 </div>
                             </div>
                         </div>
@@ -190,7 +190,7 @@
                 <div class="col-lg-8">
                     <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
                         <h3 class="font-weight-bold text-dark mb-0" style="font-size: 20px;">
-                            <i class="fa fa-newspaper text-primary mr-2"></i> Published Stories
+                            <i class="fa fa-newspaper text-primary mr-2"></i> {{ __('frontend.Published Stories') }}
                         </h3>
                         <span class="badge badge-secondary py-1 px-2 font-weight-bold">
                             {{ localizeNumber($news->total()) }} {{ __('frontend.News') }}

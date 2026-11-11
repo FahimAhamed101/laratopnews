@@ -122,4 +122,14 @@ return [
     'cookie_necessary_only' => 'Necessary Only',
     'cookie_learn_more' => 'Privacy Policy',
     'cookie_preferences' => 'Cookie Preferences',
+
+    // Author Profile & Story Elements
+    'Written By' => 'Written By',
+    'All Stories by' => 'All Stories by',
+    'Copy Link' => 'Copy Link',
+    'Copied!' => 'Copied!',
+    'Published Articles' => 'Published Articles',
+    'Total Article Reads' => 'Total Article Reads',
+    'Verified Reporter' => 'Verified Reporter',
+    'Published Stories' => 'Published Stories',
 ];

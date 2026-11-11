@@ -155,4 +155,14 @@ return [
     'cookie_necessary_only' => 'শুধুমাত্র প্রয়োজনীয়',
     'cookie_learn_more' => 'গোপনীয়তা নীতি পড়ুন',
     'cookie_preferences' => 'কুকি সেটিংস',
+
+    // Author Profile & Story Elements
+    'Written By' => 'লেখক পরিচিতি',
+    'All Stories by' => 'সব খবর',
+    'Copy Link' => 'লিংক কপি করুন',
+    'Copied!' => 'কপি হয়েছে!',
+    'Published Articles' => 'প্রকাশিত সংবাদ',
+    'Total Article Reads' => 'মোট পঠিত সংখ্যা',
+    'Verified Reporter' => 'ভেরিফায়েড প্রতিবেদক',
+    'Published Stories' => 'প্রকাশিত প্রতিবেদন',
 ];
