@@ -7,11 +7,17 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="google-site-verification" content="7D5GsLCJIj5u-4aD5whqMuZuQK5y5czs2M-JKQ6Qybk" />
 
+    <!-- Google Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-MLNZDWRF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    </script>
+    <!-- End Google Tag Manager -->
+
     <!-- Google Consent Mode v2 (GDPR / EEA / UK / California AdSense Compliance) -->
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-
         (function() {
             var consent = null;
             try {
@@ -44,7 +50,6 @@
             }
         })();
 
-        gtag('js', new Date());
         gtag('config', 'G-HM30KCBC8K');
     </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HM30KCBC8K"></script>
@@ -136,6 +141,11 @@
 </head>
 
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MLNZDWRF"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <!-- Global Variables -->
     @php
         $socialLinks = \App\Models\SocialLink::where('status', 1)->get();
