@@ -17,15 +17,30 @@ use Illuminate\Support\Str;
 class AdminAuthenticationController extends Controller
 {
     public function login(){
-        return view('admin.auth.login');
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        $response = response()->view('admin.auth.login');
+        // Clear any old legacy zombie cookies
+        $response->headers->clearCookie('extremis-news-session', '/', '.extremis.top');
+        $response->headers->clearCookie('extremis-news-session', '/', null);
+
+        return $response;
     }
 
     public function handleLogin(HandleLoginRequest $request){
         $request->authenticate();
 
         $request->session()->regenerate();
+        $request->session()->forget('url.intended');
 
-        return redirect()->intended(route('admin.dashboard', absolute: false));
+        $response = redirect()->route('admin.dashboard');
+        // Clear old legacy zombie cookies
+        $response->headers->clearCookie('extremis-news-session', '/', '.extremis.top');
+        $response->headers->clearCookie('extremis-news-session', '/', null);
+
+        return $response;
     }
 
     public function logout(Request $request):RedirectResponse{
