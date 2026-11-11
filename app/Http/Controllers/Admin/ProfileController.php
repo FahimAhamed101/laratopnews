@@ -29,21 +29,33 @@ class ProfileController extends Controller
      */
     public function update(AdminProfileUpdateRequest $request, string $id)
     {
-        //Handle image
-        $imagePath = $this->handleFileUpload($request,'image',$request->old_image);
-
-        //Save update data
-
         $admin = Admin::findOrFail($id);
+
+        // Handle avatar image
+        $imagePath = $this->handleFileUpload($request, 'image', $request->old_image);
+
+        // Handle cover banner image
+        $coverPath = $this->handleFileUpload($request, 'cover_image', $request->old_cover_image);
+
+        // Save updated writer profile data
         $admin->image = !empty($imagePath) ? $imagePath : $request->old_image;
+        if (!empty($coverPath)) {
+            $admin->cover_image = $coverPath;
+        }
         $admin->name = $request->name;
         $admin->email = $request->email;
+        $admin->designation = $request->designation;
+        $admin->bio = $request->bio;
+        $admin->website = $request->website;
+        $admin->twitter = $request->twitter;
+        $admin->linkedin = $request->linkedin;
+        $admin->facebook = $request->facebook;
+        $admin->instagram = $request->instagram;
         $admin->save();
 
-        toast(__('admin.Updated Successfully'),'success')->width('400');
+        toast(__('admin.Updated Successfully'), 'success')->width('400');
 
         return redirect()->back();
-
     }
 
     /**

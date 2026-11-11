@@ -5,6 +5,7 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\LanguageController;
 use App\Http\Controllers\Frontend\LegalPagesController;
 use App\Http\Controllers\Frontend\SitemapController;
+use App\Http\Controllers\Frontend\AuthorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::get('{key}.txt', function (string $key) {
 Route::controller(HomeController::class)->group(function () {
     Route::get('news', 'news')->name('news');
     Route::get('news-details/{slug}', 'showNews')->name('news-details');
+    Route::get('author/{id}/{slug?}', [AuthorController::class, 'show'])->name('author.profile');
     Route::post('subscribe-newsletter', 'subscribeNewsLetter')->name('subscribe-newsletter');
     Route::get('about', 'about')->name('about');
     Route::get('contact', 'contact')->name('contact');

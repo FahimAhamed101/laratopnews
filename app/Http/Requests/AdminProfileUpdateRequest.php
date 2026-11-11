@@ -23,9 +23,17 @@ class AdminProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image'=>['nullable','image','max:3000'],
-            'name'=>['required','max:255'],
-            'email'=>['required','max:255','email','unique:admins,email,'.Auth::guard('admin')->user()->id]
+            'image' => ['nullable', 'image', 'max:3000'],
+            'cover_image' => ['nullable', 'image', 'max:3000'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'max:255', 'email', 'unique:admins,email,' . Auth::guard('admin')->user()->id],
+            'designation' => ['nullable', 'string', 'max:200'],
+            'bio' => ['nullable', 'string', 'max:2000'],
+            'website' => ['nullable', 'string', 'max:255'],
+            'twitter' => ['nullable', 'string', 'max:255'],
+            'linkedin' => ['nullable', 'string', 'max:255'],
+            'facebook' => ['nullable', 'string', 'max:255'],
+            'instagram' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

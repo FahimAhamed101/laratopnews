@@ -70,6 +70,18 @@ class SitemapController extends Controller
             ];
         }
 
+        // Active Authors (Journalists / Writers)
+        $authors = \App\Models\Admin::where('status', 1)->get();
+        $authorUrls = [];
+        foreach ($authors as $auth) {
+            $authorUrls[] = [
+                'loc' => route('author.profile', ['id' => $auth->id, 'slug' => Str::slug($auth->name)]),
+                'lastmod' => ($auth->updated_at ?? now())->toAtomString(),
+                'changefreq' => 'weekly',
+                'priority' => '0.8',
+            ];
+        }
+
         // Active News Posts
         $newsPosts = News::where('status', 1)
             ->where('is_approved', 1)
@@ -94,6 +106,16 @@ class SitemapController extends Controller
 
         // Add Category URLs
         foreach ($categoryUrls as $item) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>" . htmlspecialchars($item['loc']) . "</loc>\n";
+            $xml .= "    <lastmod>" . $item['lastmod'] . "</lastmod>\n";
+            $xml .= "    <changefreq>" . $item['changefreq'] . "</changefreq>\n";
+            $xml .= "    <priority>" . $item['priority'] . "</priority>\n";
+            $xml .= "  </url>\n";
+        }
+
+        // Add Author Profile URLs
+        foreach ($authorUrls as $item) {
             $xml .= "  <url>\n";
             $xml .= "    <loc>" . htmlspecialchars($item['loc']) . "</loc>\n";
             $xml .= "    <lastmod>" . $item['lastmod'] . "</lastmod>\n";

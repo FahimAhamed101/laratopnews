@@ -62,7 +62,16 @@
     'author' => [
         '@type' => 'Person',
         'name' => $news->author?->name ?? 'Editorial Desk',
-        'url' => 'https://fahimweb.com',
+        'jobTitle' => $news->author?->designation ?? 'Staff Correspondent',
+        'url' => $news->author ? route('author.profile', ['id' => $news->author->id, 'slug' => Str::slug($news->author->name)]) : url('/'),
+        'image' => $news->author?->image ? asset($news->author->image) : asset($settings['site_logo'] ?? ''),
+        'sameAs' => array_values(array_filter([
+            $news->author?->website,
+            $news->author?->twitter,
+            $news->author?->linkedin,
+            $news->author?->facebook,
+            $news->author?->instagram,
+        ])),
     ],
     'publisher' => [
         '@type' => 'NewsMediaOrganization',
@@ -124,6 +133,9 @@
 
 @section('content')
 
+    <!-- Sticky Reading Progress Bar -->
+    <div id="readingProgressBar" style="position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa); z-index: 999999; width: 0%; transition: width 0.1s ease;"></div>
+
     <section class="pb-80">
         <div class="container">
             <div class="row">
@@ -159,7 +171,16 @@
                             <ul class="list-inline d-flex flex-wrap justify-content-start align-items-center mb-0" style="gap: 15px;">
                                 <li class="list-inline-item">
                                     <i class="fa fa-user text-muted mr-1"></i> {{ __('frontend.By') }}
-                                    <strong>{{ $news->author?->name ?? 'Editorial Desk' }}</strong>
+                                    @if($news->author)
+                                        <a href="{{ $news->author->profileUrl() }}" class="text-dark font-weight-bold" style="text-decoration: underline; text-decoration-color: #cbd5e1;">
+                                            {{ $news->author->name }}
+                                        </a>
+                                        @if($news->author->designation)
+                                            <span class="badge badge-light border text-muted ml-1" style="font-weight: 500; font-size: 11px;">{{ $news->author->designation }}</span>
+                                        @endif
+                                    @else
+                                        <strong>Editorial Desk</strong>
+                                    @endif
                                 </li>
                                 <li class="list-inline-item">
                                     <i class="fa fa-calendar-alt text-muted mr-1"></i>
@@ -200,7 +221,8 @@
                                     <span class="share">{{ __('frontend.share on:') }}</span>
                                     <li class="list-inline-item">
                                         <a class="btn btn-social-o facebook"
-                                            href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}">
+                                            href="https://www.facebook.com/sharer/sharer.php?u={{ url()->current() }}"
+                                            target="_blank" rel="noopener">
                                             <i class="fa fa-facebook-f"></i>
                                             <span>facebook</span>
                                         </a>
@@ -208,21 +230,24 @@
                                     </li>
                                     <li class="list-inline-item">
                                         <a class="btn btn-social-o twitter"
-                                            href="https://twitter.com/intent/tweet?text={{ $news->title }}&url={{ url()->current() }}">
+                                            href="https://twitter.com/intent/tweet?text={{ urlencode($news->title) }}&url={{ url()->current() }}"
+                                            target="_blank" rel="noopener">
                                             <i class="fa fa-twitter"></i>
                                             <span>twitter</span>
                                         </a>
                                     </li>
                                     <li class="list-inline-item">
                                         <a class="btn btn-social-o whatsapp"
-                                            href="https://wa.me/?text={{ $news->title }}%20{{ url()->current() }}">
+                                            href="https://wa.me/?text={{ urlencode($news->title) }}%20{{ url()->current() }}"
+                                            target="_blank" rel="noopener">
                                             <i class="fa fa-whatsapp"></i>
                                             <span>whatsapp</span>
                                         </a>
                                     </li>
                                     <li class="list-inline-item">
                                         <a class="btn btn-social-o telegram"
-                                            href="https://t.me/share/url?url={{ url()->current() }}&text={{ $news->title }}">
+                                            href="https://t.me/share/url?url={{ url()->current() }}&text={{ urlencode($news->title) }}"
+                                            target="_blank" rel="noopener">
                                             <i class="fa fa-telegram"></i>
                                             <span>telegram</span>
                                         </a>
@@ -230,10 +255,18 @@
 
                                     <li class="list-inline-item">
                                         <a class="btn btn-linkedin-o linkedin"
-                                            href="https://www.linkedin.com/shareArticle?mini=true&url={{ url()->current() }}&title={{ $news->title }}">
+                                            href="https://www.linkedin.com/shareArticle?mini=true&url={{ url()->current() }}&title={{ urlencode($news->title) }}"
+                                            target="_blank" rel="noopener">
                                             <i class="fa fa-linkedin"></i>
                                             <span>linkedin</span>
                                         </a>
+                                    </li>
+
+                                    <li class="list-inline-item">
+                                        <button type="button" class="btn btn-social-o" id="copyShareLink" title="Copy article link" style="border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; cursor: pointer;">
+                                            <i class="fa fa-link mr-1"></i>
+                                            <span id="copyShareLinkText">Copy Link</span>
+                                        </button>
                                     </li>
 
                                 </ul>
@@ -268,44 +301,87 @@
 
                     <!-- authors-->
                     <!-- Profile author -->
-                    <div class="wrap__profile">
-                        <div class="wrap__profile-author">
-                            <figure>
-                                <img style="width:200px;height:200px;object-fit:cover;"
-                                    src="{{ asset($news->author->image) }}" alt=""
-                                    class="img-fluid rounded-circle">
-                            </figure>
-                            <div class="wrap__profile-author-detail">
-                                <div class="wrap__profile-author-detail-name">{{ __('frontend.author') }}</div>
-                                <h4>{{ $news->author?->name ?? 'Editorial Desk' }}</h4>
-                                <p>{{ $news->title }}</p>
-                                <ul class="list-inline">
-                                    <li class="list-inline-item">
-                                        <a href="#" class="btn btn-social btn-social-o facebook ">
-                                            <i class="fa fa-facebook"></i>
+                    <div class="wrap__profile p-4 mb-4" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 12px rgba(15,23,42,0.04);">
+                        <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start" style="gap: 20px;">
+                            <a href="{{ $news->author ? $news->author->profileUrl() : '#' }}" class="position-relative flex-shrink-0" style="display: inline-block;">
+                                <img style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #2563eb; box-shadow: 0 4px 12px rgba(37,99,235,0.2);"
+                                    src="{{ asset($news->author?->image ?? 'frontend/asset/images/avatar.jpg') }}" alt="{{ $news->author?->name ?? 'Author' }}"
+                                    class="rounded-circle">
+                                <span class="position-absolute" style="bottom: 2px; right: 2px; background: #2563eb; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 2px solid #fff;" title="Verified Staff Writer">
+                                    <i class="fa fa-check"></i>
+                                </span>
+                            </a>
+                            <div class="flex-grow-1 text-center text-sm-left" style="width: 100%;">
+                                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-between mb-2" style="gap: 8px;">
+                                    <div>
+                                        <span class="text-uppercase font-weight-bold" style="font-size: 11px; letter-spacing: 0.08em; color: #2563eb;">{{ __('frontend.Written By') }}</span>
+                                        <h4 class="mb-0 font-weight-bold" style="color: #0f172a; font-size: 20px;">
+                                            @if($news->author)
+                                                <a href="{{ $news->author->profileUrl() }}" style="color: inherit; text-decoration: none;">
+                                                    {{ $news->author->name }}
+                                                </a>
+                                            @else
+                                                Editorial Desk
+                                            @endif
+                                        </h4>
+                                    </div>
+                                    @if($news->author?->designation)
+                                        <span class="badge badge-light border px-2 py-1 text-dark" style="font-weight: 600; font-size: 12px;">
+                                            <i class="fa fa-feather mr-1 text-primary"></i> {{ $news->author->designation }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <p class="text-muted mt-2 mb-3" style="font-size: 14px; line-height: 1.6;">
+                                    {{ $news->author?->bio ?: 'Staff writer and investigative reporter covering key stories, breaking updates, and specialized analysis for Extremis News.' }}
+                                </p>
+
+                                <div class="d-flex flex-wrap align-items-center justify-content-between pt-2" style="border-top: 1px solid #e2e8f0; gap: 12px;">
+                                    <ul class="list-inline mb-0">
+                                        @if($news->author?->website)
+                                            <li class="list-inline-item mr-2">
+                                                <a href="{{ $news->author->website }}" target="_blank" rel="noopener nofollow" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 32px; height: 32px; padding: 0; line-height: 30px; text-align: center;" title="Website">
+                                                    <i class="fa fa-globe"></i>
+                                                </a>
+                                            </li>
+                                        @endif
+                                        @if($news->author?->twitter)
+                                            <li class="list-inline-item mr-2">
+                                                <a href="{{ $news->author->twitter }}" target="_blank" rel="noopener nofollow" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 32px; height: 32px; padding: 0; line-height: 30px; text-align: center;" title="Twitter / X">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                        @endif
+                                        @if($news->author?->linkedin)
+                                            <li class="list-inline-item mr-2">
+                                                <a href="{{ $news->author->linkedin }}" target="_blank" rel="noopener nofollow" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 32px; height: 32px; padding: 0; line-height: 30px; text-align: center;" title="LinkedIn">
+                                                    <i class="fa fa-linkedin"></i>
+                                                </a>
+                                            </li>
+                                        @endif
+                                        @if($news->author?->facebook)
+                                            <li class="list-inline-item mr-2">
+                                                <a href="{{ $news->author->facebook }}" target="_blank" rel="noopener nofollow" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 32px; height: 32px; padding: 0; line-height: 30px; text-align: center;" title="Facebook">
+                                                    <i class="fa fa-facebook-f"></i>
+                                                </a>
+                                            </li>
+                                        @endif
+                                        @if($news->author?->instagram)
+                                            <li class="list-inline-item mr-2">
+                                                <a href="{{ $news->author->instagram }}" target="_blank" rel="noopener nofollow" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 32px; height: 32px; padding: 0; line-height: 30px; text-align: center;" title="Instagram">
+                                                    <i class="fa fa-instagram"></i>
+                                                </a>
+                                            </li>
+                                        @endif
+                                    </ul>
+
+                                    @if($news->author)
+                                        <a href="{{ $news->author->profileUrl() }}" class="btn btn-sm btn-outline-primary font-weight-bold px-3 py-1" style="border-radius: 20px;">
+                                            <span>{{ __('frontend.All Stories by') }} {{ Str::words($news->author->name, 1, '') }}</span>
+                                            <i class="fa fa-arrow-right ml-1"></i>
                                         </a>
-                                    </li>
-                                    <li class="list-inline-item">
-                                        <a href="#" class="btn btn-social btn-social-o twitter ">
-                                            <i class="fa fa-twitter"></i>
-                                        </a>
-                                    </li>
-                                    <li class="list-inline-item">
-                                        <a href="#" class="btn btn-social btn-social-o instagram ">
-                                            <i class="fa fa-instagram"></i>
-                                        </a>
-                                    </li>
-                                    <li class="list-inline-item">
-                                        <a href="#" class="btn btn-social btn-social-o telegram ">
-                                            <i class="fa fa-telegram"></i>
-                                        </a>
-                                    </li>
-                                    <li class="list-inline-item">
-                                        <a href="#" class="btn btn-social btn-social-o linkedin ">
-                                            <i class="fa fa-linkedin"></i>
-                                        </a>
-                                    </li>
-                                </ul>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -734,6 +810,50 @@
 @push('content')
 <script>
     $(document).ready(function(){
+        // Reading Progress Bar
+        $(window).on('scroll', function() {
+            var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            var scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+            $('#readingProgressBar').css('width', scrolled + '%');
+        });
+
+        // 1-Click Copy Share Link
+        $('#copyShareLink').on('click', function(e) {
+            e.preventDefault();
+            var shareUrl = window.location.href;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(shareUrl).then(function() {
+                    feedbackCopySuccess();
+                }).catch(function() {
+                    fallbackCopy(shareUrl);
+                });
+            } else {
+                fallbackCopy(shareUrl);
+            }
+        });
+
+        function feedbackCopySuccess() {
+            var $btn = $('#copyShareLink');
+            var $text = $('#copyShareLinkText');
+            $text.text('Copied!');
+            $btn.css({'background': '#10b981', 'color': '#ffffff', 'border-color': '#10b981'});
+            setTimeout(function() {
+                $text.text('Copy Link');
+                $btn.css({'background': '#f8fafc', 'color': '#334155', 'border-color': '#cbd5e1'});
+            }, 2500);
+        }
+
+        function fallbackCopy(text) {
+            var dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            feedbackCopySuccess();
+        }
+
         $('.delete-msg').on('click', function(e) {
                 e.preventDefault();
                 let id = $(this).data('id');

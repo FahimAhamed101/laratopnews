@@ -116,6 +116,15 @@ class NewsController extends Controller
 
         $news->tags()->attach($tagIds);
 
+        // Instant Search Engine Indexing (IndexNow Bing/Yandex + Google/Bing Sitemaps)
+        if ($news->status == 1 && $news->is_approved == 1) {
+            try {
+                app(\App\Services\SearchEngineIndexingService::class)->notifySearchEngines($news);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Search Engine Indexing notification failed: ' . $e->getMessage());
+            }
+        }
+
         toast(__('admin.Created Successfully!'), 'success')->width('330');
 
         return redirect()->route('admin.news.index');
@@ -216,7 +225,16 @@ class NewsController extends Controller
 
         $news->tags()->attach($tagIds);
 
-         toast(__('admin.Updated Successfully!'), 'success')->width('330');
+        // Instant Search Engine Indexing (IndexNow Bing/Yandex + Google/Bing Sitemaps)
+        if ($news->status == 1 && $news->is_approved == 1) {
+            try {
+                app(\App\Services\SearchEngineIndexingService::class)->notifySearchEngines($news);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Search Engine Indexing notification failed: ' . $e->getMessage());
+            }
+        }
+
+        toast(__('admin.Updated Successfully!'), 'success')->width('330');
 
          return redirect()->route('admin.news.index');
     }
